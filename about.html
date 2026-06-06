@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/public/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About AudioSlice — Free Browser-Based Audio Editor</title>
+    <meta
+      name="description"
+      content="AudioSlice is a free, privacy-first, browser-based audio editor built with the Web Audio API. Learn about our mission, technology, and commitment to keeping your audio private."
+    />
+    <meta
+      name="keywords"
+      content="about audioslice, browser audio editor, web audio api, free audio tool, privacy audio editor"
+    />
+    <link rel="canonical" href="https://audioslice.app/about.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #0d0e10;
+        --bg2: #141619;
+        --bg3: #1c1f24;
+        --border: #2a2d34;
+        --amber: #f5a623;
+        --amber2: #ffcc5c;
+        --red: #e8473f;
+        --green: #39d98a;
+        --blue: #4d9de0;
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Syne", sans-serif;
+        --radius: 6px;
+      }
+      [data-theme="light"] {
+        --bg: #f4f3ef;
+        --bg2: #eae9e4;
+        --bg3: #dddbd4;
+        --border: #c8c5bc;
+        --text: #1a1b1e;
+        --muted: #7a7770;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+      }
+      a {
+        color: var(--amber);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--amber2);
+      }
+      button {
+        cursor: pointer;
+        font-family: var(--sans);
+        border: none;
+        outline: none;
+      }
+      .ad-slot {
+        background: var(--bg3);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .ad-leaderboard {
+        width: 100%;
+        height: 90px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(13, 14, 16, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+      .logo span {
+        color: var(--amber);
+      }
+      [data-theme="light"] .logo {
+        color: #1a1b1e;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      nav a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--text);
+      }
+      [data-theme="light"] nav a.active {
+        color: wheat;
+      }
+      [data-theme="light"] .theme-btn {
+        background: #1a1b1e;
+      }
+      .theme-btn {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: var(--radius);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+      #audio-label {
+        color: wheat;
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        /* color: var(--text); */
+        color: white;
+        font-size: 22px;
+      }
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: var(--bg2);
+        z-index: 99;
+        flex-direction: column;
+        border-top: 1px solid var(--border);
+      }
+      .mobile-nav.open {
+        display: flex;
+      }
+      .mobile-nav a {
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+      }
+      .ad-bar {
+        padding: 8px 24px;
+      }
+      .content {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 48px 24px;
+      }
+
+      .about-hero {
+        padding-bottom: 48px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 48px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 40px;
+        align-items: center;
+      }
+      .about-hero h1 {
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+      }
+      .about-hero h1 span {
+        color: var(--amber);
+      }
+      .about-hero p {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.8;
+        margin-top: 16px;
+        max-width: 560px;
+      }
+      .hero-logo {
+        font-size: 72px;
+        text-align: center;
+        animation: float 4s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 48px;
+      }
+      .stat-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+      }
+      .stat-num {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--amber);
+      }
+      .stat-lbl {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+        font-family: var(--mono);
+        letter-spacing: 0.05em;
+      }
+
+      section {
+        margin-bottom: 48px;
+      }
+      section h2 {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      section p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.9;
+        margin-bottom: 14px;
+      }
+      section ul {
+        margin: 0 0 14px 18px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.9;
+      }
+      section ul li {
+        margin-bottom: 4px;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .tech-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .tech-card .icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      .tech-card h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .tech-card p {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .cta-box {
+        background: var(--bg2);
+        border: 1px solid var(--amber);
+        border-radius: 10px;
+        padding: 32px;
+        text-align: center;
+        margin-top: 48px;
+      }
+      .cta-box h2 {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+      .cta-box p {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .cta-btn {
+        display: inline-block;
+        background: var(--amber);
+        color: #0d0e10;
+        padding: 12px 32px;
+        border-radius: var(--radius);
+        font-weight: 700;
+        font-size: 14px;
+        transition: background 0.2s;
+      }
+      .cta-btn:hover {
+        background: var(--amber2);
+        color: #0d0e10;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 32px;
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      footer h4 {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      footer ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      footer ul li a {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      footer ul li a:hover {
+        color: var(--text);
+      }
+
+      @media (max-width: 600px) {
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .about-hero {
+          grid-template-columns: 1fr;
+        }
+        .hero-logo {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span id="audio-label">Audio</span><span>Slice</span>
+      </div>
+      <nav>
+        <a href="index.html">Editor</a>
+        <a href="blog.html">Blog</a>
+        <a href="faq.html">FAQ</a>
+        <a href="about.html" class="active">About</a>
+      </nav>
+      <div style="display: flex; gap: 8px; align-items: center">
+        <button class="theme-btn" id="theme-toggle">☀️</button>
+        <button class="hamburger" id="hamburger">☰</button>
+      </div>
+    </header>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="index.html">Editor</a><a href="blog.html">Blog</a
+      ><a href="faq.html">FAQ</a><a href="about.html">About</a>
+    </div>
+
+    <div class="ad-bar">
+      <div class="ad-slot ad-leaderboard">Advertisement · 728×90</div>
+    </div>
+
+    <div class="content">
+      <div class="about-hero">
+        <div>
+          <h1>Built for <span>Everyone</span><br />Who Works With Audio</h1>
+          <p>
+            AudioSlice is a free, browser-based audio editor that runs entirely
+            on your device. No account. No upload. No waiting. Just open the
+            page and start editing.
+          </p>
+        </div>
+        <div class="hero-logo">🎵</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-lbl">Client-Side</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">0</div>
+          <div class="stat-lbl">Files Uploaded</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">7+</div>
+          <div class="stat-lbl">Audio Formats</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">Free</div>
+          <div class="stat-lbl">Always</div>
+        </div>
+      </div>
+
+      <section>
+        <h2>Our Mission</h2>
+        <p>
+          Most online audio editors ask you to upload your files to their
+          servers, create an account, and wait for processing. We built
+          AudioSlice because we believe that shouldn't be necessary.
+        </p>
+        <p>
+          Modern browsers are capable of decoding, displaying, editing, and
+          re-encoding audio entirely within the browser tab — with no round-trip
+          to a server. AudioSlice leverages the Web Audio API to do exactly
+          that: professional-grade editing that respects your privacy and works
+          instantly, regardless of your internet speed.
+        </p>
+      </section>
+
+      <section>
+        <h2>What You Can Do</h2>
+        <ul>
+          <li>
+            Upload one or multiple audio files (MP3, WAV, OGG, FLAC, M4A, AAC,
+            WebM)
+          </li>
+          <li>Visualize audio as a waveform with a precise timeline</li>
+          <li>Select regions by clicking and dragging on the waveform</li>
+          <li>Cut out unwanted sections or isolate specific clips</li>
+          <li>Step through an unlimited undo history</li>
+          <li>Combine multiple files into a single joined track</li>
+          <li>Download your edited audio as a high-quality WAV file</li>
+          <li>Use dark mode or light mode, whichever you prefer</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>The Technology</h2>
+        <p>
+          AudioSlice is built entirely with standard web APIs — no external
+          libraries, no frameworks, no server-side code.
+        </p>
+        <div class="tech-grid">
+          <div class="tech-card">
+            <div class="icon">🎛</div>
+            <h3>Web Audio API</h3>
+            <p>
+              Decodes audio files into raw PCM AudioBuffers for manipulation and
+              playback.
+            </p>
+          </div>
+          <div class="tech-card">
+            <div class="icon">🖼</div>
+            <h3>Canvas API</h3>
+            <p>
+              Renders the waveform, timeline, and playhead in real-time with
+              every edit.
+            </p>
+          </div>
+          <div class="tech-card">
+            <div class="icon">📦</div>
+            <h3>WAV Encoder</h3>
+            <p>
+              A built-in PCM encoder converts the edited AudioBuffer to a
+              downloadable WAV file.
+            </p>
+          </div>
+          <div class="tech-card">
+            <div class="icon">🔒</div>
+            <h3>Zero Network I/O</h3>
+            <p>
+              No fetch calls for your audio data. Everything stays inside your
+              browser tab.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Privacy Commitment</h2>
+        <p>
+          When you load an audio file in AudioSlice, it is decoded directly into
+          your browser's memory using JavaScript. It is never sent over the
+          network, never written to a remote database, and never seen by us or
+          any third party.
+        </p>
+        <p>
+          When you close or refresh the browser tab, all audio data is released
+          from memory. There is no persistence, no cloud sync, and no session
+          storage of your files.
+        </p>
+        <p>
+          We serve display advertisements through third-party ad networks. These
+          ads may use cookies per their own privacy policies, which is separate
+          from your audio files. See our <a href="#">Privacy Policy</a> for full
+          details.
+        </p>
+      </section>
+
+      <div class="cta-box">
+        <h2>Ready to Edit?</h2>
+        <p>
+          No sign-up required. Drag a file onto the editor and start cutting.
+        </p>
+        <a href="index.html" class="cta-btn">Open AudioSlice Editor →</a>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="logo">Audio<span>Slice</span></div>
+        <p
+          style="
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.6;
+          "
+        >
+          Free browser-based audio editor.
+        </p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="index.html">Audio Editor</a></li>
+          <li><a href="index.html">Audio Cutter</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      © 2025 AudioSlice — All processing happens in your browser.
+    </div>
+
+    <script>
+      // document
+      //   .getElementById("theme-toggle")
+      //   .addEventListener("click", function () {
+      //     const d = document.documentElement;
+      //     const isDk = d.getAttribute("data-theme") !== "light";
+      //     d.setAttribute("data-theme", isDk ? "light" : "dark");
+      //     this.textContent = isDk ? "🌙" : "☀️";
+      //   });
+      // document
+      //   .getElementById("hamburger")
+      //   .addEventListener("click", () =>
+      //     document.getElementById("mobile-nav").classList.toggle("open"),
+      //   );
+      (function () {
+        const btn = document.getElementById("theme-toggle");
+        let dark = localStorage.getItem("theme") !== "light";
+        btn.textContent = dark ? "☀️" : "🌙";
+        btn.addEventListener("click", function () {
+          dark = !dark;
+          const theme = dark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+          this.textContent = dark ? "☀️" : "🌙";
+        });
+        document
+          .getElementById("hamburger")
+          .addEventListener("click", () =>
+            document.getElementById("mobile-nav").classList.toggle("open"),
+          );
+      })();
+    </script>
+  </body>
+</html>

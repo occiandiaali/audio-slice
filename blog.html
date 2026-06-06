@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/public/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog — Audio Editing Tips & Tutorials | AudioSlice</title>
+    <meta
+      name="description"
+      content="Learn how to trim, cut, join and edit audio files online. Free tutorials on MP3, WAV, OGG editing, format differences, and podcasting tips."
+    />
+    <meta
+      name="keywords"
+      content="how to trim audio, cut mp3 online, audio editing tutorial, wav vs mp3, join audio files, podcast editing"
+    />
+    <link rel="canonical" href="https://audioslice.app/blog.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #0d0e10;
+        --bg2: #141619;
+        --bg3: #1c1f24;
+        --border: #2a2d34;
+        --amber: #f5a623;
+        --amber2: #ffcc5c;
+        --red: #e8473f;
+        --green: #39d98a;
+        --blue: #4d9de0;
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Syne", sans-serif;
+        --radius: 6px;
+      }
+      [data-theme="light"] {
+        --bg: #f4f3ef;
+        --bg2: #eae9e4;
+        --bg3: #dddbd4;
+        --border: #c8c5bc;
+        --text: #1a1b1e;
+        --muted: #7a7770;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+      }
+      a {
+        color: var(--amber);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--amber2);
+      }
+      button {
+        cursor: pointer;
+        font-family: var(--sans);
+        border: none;
+        outline: none;
+      }
+      .ad-slot {
+        background: var(--bg3);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .ad-leaderboard {
+        width: 100%;
+        height: 90px;
+      }
+      .ad-sidebar {
+        width: 100%;
+        height: 250px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(13, 14, 16, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+      .logo span {
+        color: var(--amber);
+      }
+      [data-theme="light"] .logo {
+        color: #1a1b1e;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      nav a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--text);
+      }
+      [data-theme="light"] nav a.active {
+        color: wheat;
+      }
+      [data-theme="light"] .theme-btn {
+        background: #1a1b1e;
+      }
+      .theme-btn {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: var(--radius);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: background 0.2s;
+      }
+      .theme-btn:hover {
+        background: var(--border);
+      }
+      #audio-label {
+        color: wheat;
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        /* color: var(--text); */
+        color: white;
+        font-size: 22px;
+      }
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: var(--bg2);
+        z-index: 99;
+        flex-direction: column;
+        border-top: 1px solid var(--border);
+      }
+      .mobile-nav.open {
+        display: flex;
+      }
+      .mobile-nav a {
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+      }
+      .ad-bar {
+        padding: 8px 24px;
+      }
+      .page-wrap {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+      }
+      .main-col {
+        min-width: 0;
+      }
+      .side-col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .panel {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .panel-head {
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .panel-head h2 {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .panel-body {
+        padding: 18px;
+      }
+
+      /* blog hero */
+      .blog-hero {
+        padding: 48px 0 32px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 32px;
+      }
+      .blog-hero h1 {
+        font-size: clamp(28px, 4vw, 48px);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+      .blog-hero h1 span {
+        color: var(--amber);
+      }
+      .blog-hero p {
+        color: var(--muted);
+        font-size: 15px;
+        margin-top: 12px;
+        max-width: 520px;
+        line-height: 1.7;
+      }
+
+      /* article grid */
+      .article-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+      .article-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .article-card:hover {
+        border-color: var(--amber);
+        transform: translateY(-3px);
+      }
+      .card-tag {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--amber);
+        font-family: var(--mono);
+      }
+      .card-img {
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 52px;
+        background: var(--bg3);
+      }
+      .card-body {
+        padding: 16px;
+      }
+      .card-body h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 6px 0 8px;
+        line-height: 1.3;
+      }
+      .card-body p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 12px;
+      }
+      .card-body .meta {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      .read-more {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: var(--amber);
+        text-transform: uppercase;
+        margin-top: 8px;
+      }
+
+      /* article full */
+      .article-full {
+        margin-bottom: 40px;
+      }
+      .article-full h2 {
+        font-size: clamp(20px, 3vw, 30px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+        scroll-margin-top: 72px;
+      }
+      .article-full h2 a {
+        color: var(--text);
+      }
+      .article-full h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 24px 0 8px;
+        color: var(--amber);
+      }
+      .article-full p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-bottom: 14px;
+      }
+      .article-full ul,
+      ol {
+        margin: 0 0 14px 20px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .article-full blockquote {
+        border-left: 3px solid var(--amber);
+        padding: 10px 16px;
+        margin: 16px 0;
+        background: rgba(245, 166, 35, 0.06);
+        border-radius: 0 6px 6px 0;
+        font-style: italic;
+        color: var(--text);
+      }
+      .article-full code {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: var(--bg3);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: var(--amber2);
+      }
+      .article-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 36px 0;
+      }
+      .article-meta {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-bottom: 16px;
+      }
+
+      /* sidebar */
+      .toc a {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        padding: 4px 0;
+        border-bottom: 1px solid var(--border);
+        transition: color 0.2s;
+      }
+      .toc a:hover {
+        color: var(--amber);
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 32px;
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      footer h4 {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      footer ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      footer ul li a {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      footer ul li a:hover {
+        color: var(--text);
+      }
+
+      @media (max-width: 900px) {
+        .page-wrap {
+          grid-template-columns: 1fr;
+        }
+        .side-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+      }
+      @media (max-width: 600px) {
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .side-col {
+          grid-template-columns: 1fr;
+        }
+        .article-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span id="audio-label">Audio</span><span>Slice</span>
+      </div>
+      <nav>
+        <a href="index.html">Editor</a>
+        <a href="blog.html" class="active">Blog</a>
+        <a href="faq.html">FAQ</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div style="display: flex; gap: 8px; align-items: center">
+        <button class="theme-btn" id="theme-toggle">☀️</button>
+        <button class="hamburger" id="hamburger">☰</button>
+      </div>
+    </header>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="index.html">Editor</a><a href="blog.html">Blog</a
+      ><a href="faq.html">FAQ</a><a href="about.html">About</a>
+    </div>
+
+    <div class="ad-bar">
+      <div class="ad-slot ad-leaderboard">Advertisement · 728×90</div>
+    </div>
+
+    <div class="page-wrap">
+      <div class="main-col">
+        <div class="blog-hero">
+          <h1>Audio Editing <span>Tips & Guides</span></h1>
+          <p>
+            In-depth tutorials, format explainers, and workflow guides to help
+            you edit audio faster — right in your browser.
+          </p>
+        </div>
+
+        <!-- Card grid preview -->
+        <div class="article-grid">
+          <div class="article-card">
+            <div class="card-img">✂️</div>
+            <div class="card-body">
+              <div class="card-tag">Tutorial</div>
+              <h3>How to Trim Audio Online in 3 Steps</h3>
+              <p>
+                Learn how to quickly remove unwanted sections from any audio
+                file — no software needed.
+              </p>
+              <div class="meta">5 min read · Beginner</div>
+              <a class="read-more" href="#trim-audio">Read Article →</a>
+            </div>
+          </div>
+          <div class="article-card">
+            <div class="card-img">🔗</div>
+            <div class="card-body">
+              <div class="card-tag">Tutorial</div>
+              <h3>Joining Multiple Audio Files Together</h3>
+              <p>
+                Combine several tracks into one seamless audio file with
+                AudioSlice's multi-file workflow.
+              </p>
+              <div class="meta">4 min read · Beginner</div>
+              <a class="read-more" href="#join-tracks">Read Article →</a>
+            </div>
+          </div>
+          <div class="article-card">
+            <div class="card-img">📊</div>
+            <div class="card-body">
+              <div class="card-tag">Explainer</div>
+              <h3>WAV vs MP3: Which Format Should You Use?</h3>
+              <p>
+                Understand the trade-offs between lossless and lossy audio
+                formats for different use cases.
+              </p>
+              <div class="meta">6 min read · Intermediate</div>
+              <a class="read-more" href="#wav-vs-mp3">Read Article →</a>
+            </div>
+          </div>
+          <div class="article-card">
+            <div class="card-img">🎙</div>
+            <div class="card-body">
+              <div class="card-tag">Workflow</div>
+              <h3>Quick Podcast Editing Without Desktop Software</h3>
+              <p>
+                A practical guide to cleaning up podcast recordings entirely in
+                the browser.
+              </p>
+              <div class="meta">7 min read · Intermediate</div>
+              <a class="read-more" href="#podcast-editing">Read Article →</a>
+            </div>
+          </div>
+        </div>
+
+        <hr class="article-divider" />
+
+        <!-- Full articles -->
+        <div id="trim-audio" class="article-full">
+          <div class="article-meta">
+            Published Jun 2025 · Tutorial · 5 min read
+          </div>
+          <h2><a href="#trim-audio">How to Trim Audio Online in 3 Steps</a></h2>
+          <p>
+            Whether you're cutting silence from the start of a recording,
+            removing an unwanted section in the middle, or isolating a specific
+            clip from a longer track, AudioSlice makes the process completely
+            browser-based — no software installation required, and your files
+            never leave your device.
+          </p>
+          <h3>Step 1 — Upload Your File</h3>
+          <p>
+            Head to the <a href="index.html">AudioSlice Editor</a>. Click the
+            upload zone or drag-and-drop your audio file. Supported formats
+            include <code>MP3</code>, <code>WAV</code>, <code>OGG</code>,
+            <code>FLAC</code>, <code>M4A</code>, and <code>AAC</code>. Once the
+            file is decoded you'll see its waveform rendered in the editor.
+          </p>
+          <h3>Step 2 — Select a Region</h3>
+          <p>
+            Click and drag directly on the waveform to highlight the region you
+            want to act on. The selection will be highlighted in amber, and the
+            time range will appear in the info bar above the waveform. You can
+            adjust the selection by starting a new drag at any time.
+          </p>
+          <h3>Step 3 — Cut or Keep</h3>
+          <p>Choose one of two editing modes:</p>
+          <ul>
+            <li>
+              <strong>✂ Cut Selection</strong> — removes the highlighted region
+              and stitches the remaining audio together seamlessly.
+            </li>
+            <li>
+              <strong>⬛ Keep Selection</strong> — discards everything outside
+              your selection, leaving only the highlighted segment.
+            </li>
+          </ul>
+          <p>
+            Hit <strong>⬇ Download</strong> when done to save your edited audio
+            as a high-quality WAV file.
+          </p>
+          <blockquote>
+            Tip: Use the <strong>Undo</strong> button (or Ctrl+Z) to step back
+            through your edits without starting over.
+          </blockquote>
+        </div>
+
+        <hr class="article-divider" />
+
+        <div id="join-tracks" class="article-full">
+          <div class="article-meta">
+            Published Jun 2025 · Tutorial · 4 min read
+          </div>
+          <h2>
+            <a href="#join-tracks">Joining Multiple Audio Files Together</a>
+          </h2>
+          <p>
+            AudioSlice supports uploading multiple files at once and loading
+            them onto the waveform editor in sequence — making it easy to
+            assemble a longer track from several smaller clips.
+          </p>
+          <h3>Uploading Multiple Files</h3>
+          <p>
+            When you open the file picker or drag files into the upload zone,
+            you can select multiple files at once. Each uploaded file appears in
+            the file list with its name, duration, and channel count. Files are
+            stored locally in your browser session — nothing is sent to a
+            server.
+          </p>
+          <h3>Loading Files onto the Waveform</h3>
+          <p>
+            Click the <strong>+</strong> button next to any file in the list, or
+            click the file row itself, to load it into the waveform editor. If
+            you want to combine File A and File B, load File A first, make any
+            edits, then use the <strong>Join &amp; Export All</strong> button to
+            download the merged result.
+          </p>
+          <h3>Removing a File from the List</h3>
+          <p>
+            Each file in the upload list has a red ✕ button. Clicking it removes
+            only that file. You can also use the
+            <strong>Clear All Files</strong> button to reset everything and
+            start fresh.
+          </p>
+        </div>
+
+        <hr class="article-divider" />
+
+        <div id="wav-vs-mp3" class="article-full">
+          <div class="article-meta">
+            Published May 2025 · Explainer · 6 min read
+          </div>
+          <h2>
+            <a href="#wav-vs-mp3">WAV vs MP3: Which Format Should You Use?</a>
+          </h2>
+          <p>
+            Choosing between WAV and MP3 comes down to three factors: quality,
+            file size, and intended use.
+          </p>
+          <h3>WAV — Lossless, Uncompressed</h3>
+          <p>
+            WAV files store raw PCM audio data with no compression. A 3-minute
+            stereo track at 44.1 kHz / 16-bit depth will be roughly 30 MB. Every
+            edit you make preserves full fidelity. AudioSlice exports in WAV to
+            ensure you never lose quality during the editing process.
+          </p>
+          <h3>MP3 — Lossy, Compressed</h3>
+          <p>
+            MP3 uses psychoacoustic compression to reduce file sizes by 10× or
+            more. The quality loss is often imperceptible at 192 kbps or above,
+            which makes MP3 ideal for streaming, podcasting, and distribution.
+            However, each re-encode introduces additional quality loss
+            ("generation loss"), so editing in WAV then converting to MP3 at the
+            end is the recommended workflow.
+          </p>
+          <h3>Which Should You Choose?</h3>
+          <ul>
+            <li>Editing or archiving audio → <strong>WAV</strong></li>
+            <li>
+              Sharing a podcast episode → <strong>MP3 @ 128–192 kbps</strong>
+            </li>
+            <li>
+              Professional music production → <strong>WAV or FLAC</strong>
+            </li>
+            <li>Ringtones or mobile alerts → <strong>M4A / AAC</strong></li>
+          </ul>
+        </div>
+
+        <hr class="article-divider" />
+
+        <div id="podcast-editing" class="article-full">
+          <div class="article-meta">
+            Published May 2025 · Workflow · 7 min read
+          </div>
+          <h2>
+            <a href="#podcast-editing"
+              >Quick Podcast Editing Without Desktop Software</a
+            >
+          </h2>
+          <p>
+            Many podcasters don't need a full DAW like Audacity or Adobe
+            Audition. For simple cleanup tasks — trimming silence, cutting
+            filler sections, removing false starts — a browser-based tool is
+            often faster.
+          </p>
+          <h3>1. Remove Long Silences</h3>
+          <p>
+            After uploading your recording, zoom into quiet sections of the
+            waveform (flat areas near the center line). Select those regions and
+            use <strong>Cut Selection</strong> to remove dead air without
+            affecting the rest of the episode.
+          </p>
+          <h3>2. Cut Filler Words &amp; Mistakes</h3>
+          <p>
+            Listen to the recording with the built-in playback, pause when you
+            hear a mistake, note the timestamp, then use the waveform selector
+            to isolate that region and cut it out. Use <strong>Undo</strong> if
+            the cut sounds wrong in context.
+          </p>
+          <h3>3. Assemble Multi-Segment Episodes</h3>
+          <p>
+            If your episode has multiple recorded segments, upload them all,
+            load each in sequence, trim, and use
+            <strong>Join &amp; Export All</strong> to merge them into a final
+            deliverable.
+          </p>
+          <blockquote>
+            AudioSlice processes everything in your browser using the Web Audio
+            API — your recordings are never uploaded to any server, keeping your
+            content private.
+          </blockquote>
+        </div>
+      </div>
+      <!-- /main-col -->
+
+      <div class="side-col">
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+        <div class="panel">
+          <div class="panel-head"><h2>📖 Table of Contents</h2></div>
+          <div class="panel-body toc">
+            <a href="#trim-audio">How to Trim Audio Online</a>
+            <a href="#join-tracks">Joining Multiple Audio Files</a>
+            <a href="#wav-vs-mp3">WAV vs MP3 Explained</a>
+            <a href="#podcast-editing">Podcast Editing Guide</a>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>🔧 Try the Editor</h2></div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <p style="font-size: 13px; color: var(--muted); line-height: 1.6">
+              Ready to edit your audio? Try AudioSlice — free, browser-based, no
+              signup.
+            </p>
+            <a
+              href="index.html"
+              style="
+                display: block;
+                background: var(--amber);
+                color: #0d0e10;
+                text-align: center;
+                padding: 10px;
+                border-radius: var(--radius);
+                font-weight: 700;
+                font-size: 13px;
+              "
+              >Open Editor →</a
+            >
+          </div>
+        </div>
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="logo">Audio<span>Slice</span></div>
+        <p
+          style="
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.6;
+          "
+        >
+          Free browser-based audio editor.
+        </p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="index.html">Audio Editor</a></li>
+          <li><a href="index.html">Audio Cutter</a></li>
+          <li><a href="index.html">Audio Joiner</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      © 2025 AudioSlice — All processing happens in your browser.
+    </div>
+
+    <script>
+      // document
+      //   .getElementById("theme-toggle")
+      //   .addEventListener("click", function () {
+      //     const d = document.documentElement;
+      //     const isDk = d.getAttribute("data-theme") !== "light";
+      //     d.setAttribute("data-theme", isDk ? "light" : "dark");
+      //     this.textContent = isDk ? "🌙" : "☀️";
+      //   });
+      // document
+      //   .getElementById("hamburger")
+      //   .addEventListener("click", () =>
+      //     document.getElementById("mobile-nav").classList.toggle("open"),
+      //   );
+      (function () {
+        const btn = document.getElementById("theme-toggle");
+        let dark = localStorage.getItem("theme") !== "light";
+        btn.textContent = dark ? "☀️" : "🌙";
+        btn.addEventListener("click", function () {
+          dark = !dark;
+          const theme = dark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+          this.textContent = dark ? "☀️" : "🌙";
+        });
+        document
+          .getElementById("hamburger")
+          .addEventListener("click", () =>
+            document.getElementById("mobile-nav").classList.toggle("open"),
+          );
+      })();
+    </script>
+  </body>
+</html>

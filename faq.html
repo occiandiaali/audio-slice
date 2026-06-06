@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/public/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ — Frequently Asked Questions | AudioSlice</title>
+    <meta
+      name="description"
+      content="Answers to common questions about AudioSlice: supported formats, privacy, how to cut audio, browser compatibility, download options, and more."
+    />
+    <meta
+      name="keywords"
+      content="audio editor faq, how to cut audio online, is audioslice free, audio editor privacy, supported audio formats browser"
+    />
+    <link rel="canonical" href="https://audioslice.app/faq.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
+    <!-- Schema.org FAQ structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is AudioSlice free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. AudioSlice is completely free. There are no sign-ups, no subscriptions, and no hidden fees."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does AudioSlice upload my audio files to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. All audio processing happens entirely in your browser using the Web Audio API. Your files never leave your device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What audio formats does AudioSlice support?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AudioSlice supports MP3, WAV, OGG, FLAC, M4A, AAC, and WebM audio files."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What format is the downloaded file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AudioSlice exports edited audio as a WAV file to preserve maximum quality."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I cut multiple segments from one file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. You can make multiple sequential cuts. Each edit is applied to the buffer and you can undo steps individually."
+            }
+          }
+        ]
+      }
+    </script>
+    <style>
+      :root {
+        --bg: #0d0e10;
+        --bg2: #141619;
+        --bg3: #1c1f24;
+        --border: #2a2d34;
+        --amber: #f5a623;
+        --amber2: #ffcc5c;
+        --red: #e8473f;
+        --green: #39d98a;
+        --blue: #4d9de0;
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Syne", sans-serif;
+        --radius: 6px;
+      }
+      [data-theme="light"] {
+        --bg: #f4f3ef;
+        --bg2: #eae9e4;
+        --bg3: #dddbd4;
+        --border: #c8c5bc;
+        --text: #1a1b1e;
+        --muted: #7a7770;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+      }
+      a {
+        color: var(--amber);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--amber2);
+      }
+      button {
+        cursor: pointer;
+        font-family: var(--sans);
+        border: none;
+        outline: none;
+      }
+      .ad-slot {
+        background: var(--bg3);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .ad-leaderboard {
+        width: 100%;
+        height: 90px;
+      }
+      .ad-sidebar {
+        width: 100%;
+        height: 250px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(13, 14, 16, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+      .logo span {
+        color: var(--amber);
+      }
+      [data-theme="light"] .logo {
+        color: #1a1b1e;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      nav a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--text);
+      }
+      [data-theme="light"] nav a.active {
+        color: wheat;
+      }
+      [data-theme="light"] .theme-btn {
+        background: #1a1b1e;
+      }
+      .theme-btn {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: var(--radius);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+      #audio-label {
+        color: wheat;
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        /* color: var(--text); */
+        color: white;
+        font-size: 22px;
+      }
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: var(--bg2);
+        z-index: 99;
+        flex-direction: column;
+        border-top: 1px solid var(--border);
+      }
+      .mobile-nav.open {
+        display: flex;
+      }
+      .mobile-nav a {
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+      }
+      .ad-bar {
+        padding: 8px 24px;
+      }
+      .page-wrap {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+      }
+      .main-col {
+        min-width: 0;
+      }
+      .side-col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .panel {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .panel-head {
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+      }
+      .panel-head h2 {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .panel-body {
+        padding: 18px;
+      }
+
+      .faq-hero {
+        padding: 48px 0 32px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 32px;
+      }
+      .faq-hero h1 {
+        font-size: clamp(28px, 4vw, 48px);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+      .faq-hero h1 span {
+        color: var(--amber);
+      }
+      .faq-hero p {
+        color: var(--muted);
+        font-size: 15px;
+        margin-top: 12px;
+        max-width: 520px;
+        line-height: 1.7;
+      }
+
+      .faq-section {
+        margin-bottom: 36px;
+      }
+      .faq-section h2 {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--amber);
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .faq-item {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .faq-item:hover {
+        border-color: var(--amber);
+      }
+      .faq-q {
+        width: 100%;
+        background: var(--bg2);
+        padding: 14px 18px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        transition: background 0.2s;
+      }
+      .faq-q:hover {
+        background: var(--bg3);
+      }
+      .faq-q .chevron {
+        font-size: 12px;
+        color: var(--muted);
+        transition: transform 0.3s;
+        flex-shrink: 0;
+      }
+      .faq-item.open .faq-q .chevron {
+        transform: rotate(180deg);
+      }
+      .faq-a {
+        display: none;
+        padding: 14px 18px;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.8;
+        background: var(--bg);
+      }
+      .faq-item.open .faq-a {
+        display: block;
+      }
+      .faq-a code {
+        font-family: var(--mono);
+        font-size: 11px;
+        background: var(--bg3);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: var(--amber2);
+      }
+      .faq-a a {
+        color: var(--amber);
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 32px;
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      footer h4 {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      footer ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      footer ul li a {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      footer ul li a:hover {
+        color: var(--text);
+      }
+
+      @media (max-width: 900px) {
+        .page-wrap {
+          grid-template-columns: 1fr;
+        }
+        .side-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+      }
+      @media (max-width: 600px) {
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .side-col {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span id="audio-label">Audio</span><span>Slice</span>
+      </div>
+      <nav>
+        <a href="index.html">Editor</a>
+        <a href="blog.html">Blog</a>
+        <a href="faq.html" class="active">FAQ</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div style="display: flex; gap: 8px; align-items: center">
+        <button class="theme-btn" id="theme-toggle">☀️</button>
+        <button class="hamburger" id="hamburger">☰</button>
+      </div>
+    </header>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="index.html">Editor</a><a href="blog.html">Blog</a
+      ><a href="faq.html">FAQ</a><a href="about.html">About</a>
+    </div>
+
+    <div class="ad-bar">
+      <div class="ad-slot ad-leaderboard">Advertisement · 728×90</div>
+    </div>
+
+    <div class="page-wrap">
+      <div class="main-col">
+        <div class="faq-hero">
+          <h1>Frequently Asked <span>Questions</span></h1>
+          <p>
+            Everything you need to know about using AudioSlice to cut, trim,
+            join, and download audio — right in your browser.
+          </p>
+        </div>
+
+        <div class="faq-section">
+          <h2>General</h2>
+          <div class="faq-item open">
+            <button class="faq-q">
+              Is AudioSlice free to use? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Yes. AudioSlice is completely free. There are no sign-ups, no
+              subscriptions, and no hidden fees. We display ads to keep the
+              service running.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Does AudioSlice upload my audio files to a server?
+              <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              No. All audio processing happens entirely in your browser using
+              the Web Audio API. Your files are decoded locally in memory and
+              never sent to any server. Your recordings remain completely
+              private.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Which browsers are supported? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              AudioSlice works in any modern browser that supports the Web Audio
+              API. This includes Chrome 66+, Firefox 76+, Safari 14.1+, and Edge
+              79+. Internet Explorer is not supported.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Is there a file size limit? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              There is no hard limit set by AudioSlice. The practical limit
+              depends on your device's available RAM. Very large files (1 GB+)
+              may cause slower decoding or be limited by your browser's memory
+              constraints.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-section">
+          <h2>Supported Formats</h2>
+          <div class="faq-item">
+            <button class="faq-q">
+              What audio formats can I upload? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              AudioSlice supports <code>MP3</code>, <code>WAV</code>,
+              <code>OGG</code>, <code>FLAC</code>, <code>M4A</code>,
+              <code>AAC</code>, and <code>WebM</code> audio files. Format
+              support ultimately depends on your browser's codec capabilities.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              What format is the downloaded file? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              AudioSlice exports edited audio as a <code>WAV</code> file (PCM
+              16-bit, original sample rate). WAV is used to preserve maximum
+              quality regardless of the input format. You can convert the WAV to
+              MP3 or other formats using a converter after downloading.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Can I upload FLAC files? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Yes, FLAC is supported in most modern browsers. Chrome and Firefox
+              handle FLAC natively. Safari may require macOS 14+ for FLAC
+              decoding via the Web Audio API.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-section">
+          <h2>Editing</h2>
+          <div class="faq-item">
+            <button class="faq-q">
+              How do I select a region to cut? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Click and drag directly on the waveform to create a selection. The
+              selected region will be highlighted in amber. On touch devices,
+              use a single-finger drag gesture. You can start a new drag at any
+              time to replace the current selection.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              What is the difference between "Cut Selection" and "Keep
+              Selection"? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              <strong>Cut Selection (✂)</strong> removes the highlighted region
+              and joins the audio before and after it. Use this to remove
+              unwanted sections.<br /><br /><strong>Keep Selection (⬛)</strong>
+              discards everything outside your selection, leaving only the
+              highlighted part. Use this to isolate a specific clip.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Can I cut multiple segments from one file?
+              <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Yes. Each cut or keep operation is applied to the current audio
+              buffer. You can make multiple sequential edits. After each edit,
+              select a new region and cut again. Use the Undo button to step
+              back through your edit history.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              How does Undo work? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Each time you make an edit (Cut or Keep), the previous audio state
+              is saved to an undo stack. Clicking Undo (or pressing
+              <code>Ctrl+Z</code> / <code>Cmd+Z</code>) restores the previous
+              state. Up to 30 steps are stored.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Can I join multiple audio files? <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              Yes. Upload multiple files using the upload zone. Each file
+              appears in the file list. Click the + button on any file to load
+              it into the waveform, edit it, then use
+              <a href="index.html">Join &amp; Export All</a> to merge and
+              download the result.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-section">
+          <h2>Privacy & Data</h2>
+          <div class="faq-item">
+            <button class="faq-q">
+              Is my audio stored anywhere after I close the page?
+              <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              No. AudioSlice stores audio only in browser memory during your
+              session. When you close or refresh the tab, all audio data is
+              discarded. Nothing is written to disk or sent to a server.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Do you collect analytics or track my usage?
+              <span class="chevron">▼</span>
+            </button>
+            <div class="faq-a">
+              We may use standard web analytics (e.g. page views) and serve
+              display ads. Ad partners may use cookies per their own privacy
+              policies. See our <a href="#">Privacy Policy</a> for full details.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-col">
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+        <div class="panel">
+          <div class="panel-head"><h2>🔧 Jump In</h2></div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <p style="font-size: 13px; color: var(--muted); line-height: 1.6">
+              Start editing audio in seconds — no install, no signup.
+            </p>
+            <a
+              href="index.html"
+              style="
+                display: block;
+                background: var(--amber);
+                color: #0d0e10;
+                text-align: center;
+                padding: 10px;
+                border-radius: var(--radius);
+                font-weight: 700;
+                font-size: 13px;
+              "
+              >Open Editor →</a
+            >
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>📚 Related Guides</h2></div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-direction: column; gap: 8px"
+          >
+            <a
+              href="blog.html#trim-audio"
+              style="font-size: 13px; color: var(--muted)"
+              >→ How to Trim Audio Online</a
+            >
+            <a
+              href="blog.html#join-tracks"
+              style="font-size: 13px; color: var(--muted)"
+              >→ Joining Multiple Audio Files</a
+            >
+            <a
+              href="blog.html#wav-vs-mp3"
+              style="font-size: 13px; color: var(--muted)"
+              >→ WAV vs MP3 Explained</a
+            >
+            <a
+              href="blog.html#podcast-editing"
+              style="font-size: 13px; color: var(--muted)"
+              >→ Podcast Editing Guide</a
+            >
+          </div>
+        </div>
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="logo">Audio<span>Slice</span></div>
+        <p
+          style="
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.6;
+          "
+        >
+          Free browser-based audio editor.
+        </p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="index.html">Audio Editor</a></li>
+          <li><a href="index.html">Audio Cutter</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      © 2025 AudioSlice — All processing happens in your browser.
+    </div>
+
+    <script>
+      // document
+      //   .getElementById("theme-toggle")
+      //   .addEventListener("click", function () {
+      //     const d = document.documentElement;
+      //     const isDk = d.getAttribute("data-theme") !== "light";
+      //     d.setAttribute("data-theme", isDk ? "light" : "dark");
+      //     this.textContent = isDk ? "🌙" : "☀️";
+      //   });
+      // document
+      //   .getElementById("hamburger")
+      //   .addEventListener("click", () =>
+      //     document.getElementById("mobile-nav").classList.toggle("open"),
+      //   );
+      // document.querySelectorAll(".faq-q").forEach((btn) => {
+      //   btn.addEventListener("click", () => {
+      //     const item = btn.closest(".faq-item");
+      //     const wasOpen = item.classList.contains("open");
+      //     document
+      //       .querySelectorAll(".faq-item")
+      //       .forEach((i) => i.classList.remove("open"));
+      //     if (!wasOpen) item.classList.add("open");
+      //   });
+      // });
+      (function () {
+        const btn = document.getElementById("theme-toggle");
+        let dark = localStorage.getItem("theme") !== "light";
+        btn.textContent = dark ? "☀️" : "🌙";
+        btn.addEventListener("click", function () {
+          dark = !dark;
+          const theme = dark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+          this.textContent = dark ? "☀️" : "🌙";
+        });
+        document
+          .getElementById("hamburger")
+          .addEventListener("click", () =>
+            document.getElementById("mobile-nav").classList.toggle("open"),
+          );
+      })();
+    </script>
+  </body>
+</html>

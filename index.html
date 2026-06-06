@@ -1,0 +1,2032 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/public/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AudioSlice — Free Online Audio Editor & Waveform Cutter</title>
+    <meta
+      name="description"
+      content="AudioSlice is a free, browser-based audio editor. Upload MP3, WAV, OGG files, visualize waveforms, cut and join segments, and download your edited audio instantly."
+    />
+    <meta
+      name="keywords"
+      content="audio editor online, waveform cutter, trim audio, cut mp3 online, join audio, free audio editor"
+    />
+    <link rel="canonical" href="https://audioslice.app/" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="AudioSlice — Free Online Audio Editor" />
+    <meta
+      property="og:description"
+      content="Upload, visualize, cut, join and download audio files — all in your browser."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        const saved = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
+    <style>
+      /* ─── TOKENS ─────────────────────────────────────── */
+      :root {
+        --bg: #0d0e10;
+        --bg2: #141619;
+        --bg3: #1c1f24;
+        --border: #2a2d34;
+        --amber: #f5a623;
+        --amber2: #ffcc5c;
+        --red: #e8473f;
+        --green: #39d98a;
+        --blue: #4d9de0;
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Syne", sans-serif;
+        --radius: 6px;
+        --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      }
+      [data-theme="light"] {
+        --bg: #f4f3ef;
+        --bg2: #eae9e4;
+        --bg3: #dddbd4;
+        --border: #c8c5bc;
+        --text: #1a1b1e;
+        --muted: #7a7770;
+      }
+
+      /* ─── RESET ─────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      a {
+        color: var(--amber);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--amber2);
+      }
+      button {
+        cursor: pointer;
+        font-family: var(--sans);
+        border: none;
+        outline: none;
+      }
+      input[type="range"] {
+        cursor: pointer;
+      }
+
+      /* ─── AD SLOTS ───────────────────────────────────── */
+      .ad-slot {
+        background: var(--bg3);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .ad-leaderboard {
+        width: 100%;
+        height: 90px;
+      }
+      .ad-sidebar {
+        width: 100%;
+        height: 250px;
+      }
+      .ad-banner {
+        width: 100%;
+        height: 60px;
+      }
+
+      /* ─── HEADER ─────────────────────────────────────── */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(13, 14, 16, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+      .logo span {
+        color: var(--amber);
+      }
+      [data-theme="light"] .logo {
+        color: #1a1b1e;
+      }
+      #audio-label {
+        color: wheat;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      nav a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--text);
+      }
+
+      [data-theme="light"] nav a.active {
+        color: wheat;
+      }
+
+      [data-theme="light"] .theme-btn {
+        background: #1a1b1e;
+      }
+      .theme-btn {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: var(--radius);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: background 0.2s;
+      }
+      .theme-btn:hover {
+        background: var(--border);
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        /* color: var(--text); */
+        color: white;
+        font-size: 22px;
+      }
+
+      /* ─── AD LEADERBOARD ─────────────────────────────── */
+      .ad-bar {
+        padding: 8px 24px;
+      }
+
+      /* ─── LAYOUT ─────────────────────────────────────── */
+      .page-wrap {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+      }
+      .main-col {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .side-col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* ─── PANEL ─────────────────────────────────────── */
+      .panel {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .panel-head {
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .panel-head h2 {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .panel-body {
+        padding: 18px;
+      }
+
+      /* ─── UPLOAD ZONE ────────────────────────────────── */
+      .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 36px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        position: relative;
+      }
+      .upload-zone.drag-over {
+        border-color: var(--amber);
+        background: rgba(245, 166, 35, 0.06);
+      }
+      .upload-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .upload-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+      .upload-zone p {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .upload-zone strong {
+        color: var(--amber);
+      }
+
+      /* ─── FILE LIST ──────────────────────────────────── */
+      #file-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .file-item {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: border-color 0.2s;
+        cursor: pointer;
+      }
+      .file-item:hover {
+        border-color: var(--amber);
+      }
+      .file-item.active {
+        border-color: var(--amber);
+        background: rgba(245, 166, 35, 0.07);
+      }
+      .file-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .file-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .file-name {
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .file-meta {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      .file-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .btn-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        transition: background 0.15s;
+      }
+      .btn-edit {
+        background: rgba(77, 157, 224, 0.15);
+        color: var(--blue);
+      }
+      .btn-edit:hover {
+        background: rgba(77, 157, 224, 0.3);
+      }
+      .btn-del {
+        background: rgba(232, 71, 63, 0.15);
+        color: var(--red);
+      }
+      .btn-del:hover {
+        background: rgba(232, 71, 63, 0.3);
+      }
+      .btn-add {
+        background: rgba(57, 217, 138, 0.15);
+        color: var(--green);
+      }
+      .btn-add:hover {
+        background: rgba(57, 217, 138, 0.3);
+      }
+
+      /* ─── CLEAR ALL ──────────────────────────────────── */
+      .clear-bar {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .btn-outline {
+        flex: 1;
+        padding: 8px 14px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .btn-outline.amber:hover {
+        border-color: var(--amber);
+        color: var(--amber);
+      }
+
+      /* ─── WAVEFORM AREA ──────────────────────────────── */
+      #waveform-wrap {
+        position: relative;
+        background: var(--bg);
+        border-radius: 8px;
+        overflow: hidden;
+        min-height: 140px;
+        border: 1px solid var(--border);
+      }
+      #waveform-canvas {
+        width: 100%;
+        display: block;
+        cursor: crosshair;
+      }
+      .waveform-empty {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 13px;
+        gap: 8px;
+        pointer-events: none;
+      }
+      .waveform-empty .big {
+        font-size: 32px;
+      }
+
+      /* ─── TIMELINE ───────────────────────────────────── */
+      #timeline-canvas {
+        width: 100%;
+        display: block;
+      }
+
+      /* ─── PLAYBACK BAR ───────────────────────────────── */
+      .playback-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .btn-play {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--amber);
+        color: #0d0e10;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.15s,
+          background 0.15s;
+        flex-shrink: 0;
+      }
+      .btn-play:hover {
+        background: var(--amber2);
+        transform: scale(1.07);
+      }
+      .time-display {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--muted);
+        min-width: 110px;
+      }
+      .seek-wrap {
+        flex: 1;
+        min-width: 120px;
+      }
+      input[type="range"].seek {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 4px;
+        background: var(--bg3);
+        border-radius: 2px;
+        outline: none;
+      }
+      input[type="range"].seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--amber);
+        box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.25);
+      }
+      .vol-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .vol-wrap span {
+        font-size: 14px;
+      }
+      input[type="range"].vol {
+        -webkit-appearance: none;
+        width: 70px;
+        height: 4px;
+        background: var(--bg3);
+        border-radius: 2px;
+        outline: none;
+      }
+      input[type="range"].vol::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--muted);
+      }
+
+      /* ─── EDIT TOOLBAR ───────────────────────────────── */
+      .edit-toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .region-info {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--amber);
+        background: rgba(245, 166, 35, 0.1);
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid rgba(245, 166, 35, 0.2);
+      }
+      .btn-action {
+        padding: 8px 16px;
+        border-radius: var(--radius);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: all 0.15s;
+      }
+      .btn-cut {
+        background: rgba(232, 71, 63, 0.15);
+        color: var(--red);
+        border: 1px solid rgba(232, 71, 63, 0.3);
+      }
+      .btn-cut:hover {
+        background: var(--red);
+        color: #fff;
+      }
+      .btn-keep {
+        background: rgba(57, 217, 138, 0.15);
+        color: var(--green);
+        border: 1px solid rgba(57, 217, 138, 0.3);
+      }
+      .btn-keep:hover {
+        background: var(--green);
+        color: #0d0e10;
+      }
+      .btn-dl {
+        background: var(--amber);
+        color: #0d0e10;
+        border: 1px solid var(--amber);
+      }
+      .btn-dl:hover {
+        background: var(--amber2);
+      }
+      .btn-reset {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .btn-reset:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+
+      /* ─── SEGMENTS ───────────────────────────────────── */
+      .segment-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .segment-item {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .seg-index {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        background: rgba(245, 166, 35, 0.15);
+        color: var(--amber);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+      .seg-times {
+        flex: 1;
+        color: var(--muted);
+      }
+      .seg-dur {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      /* ─── STATUS ─────────────────────────────────────── */
+      #status-bar {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        padding: 8px 14px;
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+      }
+      #status-bar span {
+        color: var(--amber);
+      }
+
+      /* ─── SIDEBAR WIDGETS ────────────────────────────── */
+      .tip-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .tip {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .tip-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      /* ─── FOOTER ─────────────────────────────────────── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 24px;
+        max-width: 1320px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 32px;
+      }
+      .footer-brand .logo {
+        font-size: 18px;
+      }
+      .footer-brand p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.6;
+      }
+      footer h4 {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      footer ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      footer ul li a {
+        font-size: 13px;
+        color: var(--muted);
+        transition: color 0.2s;
+      }
+      footer ul li a:hover {
+        color: var(--text);
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+
+      /* ─── TOAST ──────────────────────────────────────── */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: transform 0.3s;
+        z-index: 999;
+        white-space: nowrap;
+      }
+      #toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+      #toast.ok {
+        border-color: var(--green);
+        color: var(--green);
+      }
+      #toast.err {
+        border-color: var(--red);
+        color: var(--red);
+      }
+
+      /* ─── RESPONSIVE ─────────────────────────────────── */
+      @media (max-width: 900px) {
+        .page-wrap {
+          grid-template-columns: 1fr;
+        }
+        .side-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+      }
+      @media (max-width: 600px) {
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .side-col {
+          grid-template-columns: 1fr;
+        }
+        .edit-toolbar {
+          gap: 6px;
+        }
+      }
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: var(--bg2);
+        z-index: 99;
+        flex-direction: column;
+        gap: 0;
+        border-top: 1px solid var(--border);
+      }
+      .mobile-nav.open {
+        display: flex;
+      }
+      .mobile-nav a {
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        display: block;
+      }
+      .progress-overlay {
+        display: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(13, 14, 16, 0.8);
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 8px;
+      }
+      .progress-overlay.show {
+        display: flex;
+      }
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid var(--border);
+        border-top-color: var(--amber);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="logo">
+        <span id="audio-label">Audio</span><span>Slice</span>
+      </div>
+      <nav>
+        <a href="index.html" class="active">Editor</a>
+        <a href="blog.html">Blog</a>
+        <a href="faq.html">FAQ</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div style="display: flex; gap: 8px; align-items: center">
+        <button class="theme-btn" id="theme-toggle" title="Toggle theme">
+          ☀️
+        </button>
+        <button class="hamburger" id="hamburger">☰</button>
+      </div>
+    </header>
+
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="index.html">Editor</a>
+      <a href="blog.html">Blog</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About</a>
+    </div>
+
+    <!-- ── AD LEADERBOARD ── -->
+    <div class="ad-bar">
+      <!-- REPLACE WITH REAL AD TAG e.g. Google AdSense -->
+      <div class="ad-slot ad-leaderboard">Advertisement · 728×90</div>
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="page-wrap">
+      <!-- ══ MAIN COLUMN ══ -->
+      <div class="main-col">
+        <!-- Upload -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>📂 Upload Audio Files</h2>
+          </div>
+          <div class="panel-body">
+            <div class="upload-zone" id="upload-zone">
+              <input type="file" id="file-input" accept="audio/*" multiple />
+              <div class="upload-icon">🎵</div>
+              <p>
+                <strong>Drop audio files here</strong> or click to browse<br />MP3
+                · WAV · OGG · FLAC · M4A · AAC
+              </p>
+            </div>
+            <div id="file-list"></div>
+            <div class="clear-bar" id="clear-bar" style="display: none">
+              <button class="btn-outline amber" id="clear-waveform">
+                ⬛ Clear Waveform
+              </button>
+              <button class="btn-outline" id="clear-all">
+                🗑 Clear All Files
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waveform -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>🎛 Waveform Editor</h2>
+            <div id="region-info" class="region-info" style="display: none">
+              No selection
+            </div>
+          </div>
+          <div style="position: relative">
+            <div id="waveform-wrap">
+              <canvas id="waveform-canvas" height="140"></canvas>
+              <canvas id="timeline-canvas" height="24"></canvas>
+              <div class="waveform-empty" id="waveform-empty">
+                <div class="big">〰️</div>
+                <div>Tap a file above to see it here</div>
+              </div>
+              <div class="progress-overlay" id="decode-overlay">
+                <div class="spinner"></div>
+                <div style="font-size: 13px; color: var(--muted)">
+                  Decoding audio…
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-direction: column; gap: 14px"
+          >
+            <!-- Playback -->
+            <div class="playback-bar">
+              <button class="btn-play" id="btn-play" title="Play / Pause">
+                ▶
+              </button>
+              <button
+                class="btn-icon btn-reset"
+                id="btn-stop"
+                title="Stop"
+                style="
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 50%;
+                  font-size: 14px;
+                "
+              >
+                ⏹
+              </button>
+              <span class="time-display" id="time-display"
+                >0:00.000 / 0:00.000</span
+              >
+              <div class="seek-wrap">
+                <input
+                  type="range"
+                  class="seek"
+                  id="seek-bar"
+                  min="0"
+                  max="1000"
+                  value="0"
+                />
+              </div>
+              <div class="vol-wrap">
+                <span>🔊</span>
+                <input
+                  type="range"
+                  class="vol"
+                  id="vol-bar"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value="1"
+                />
+              </div>
+            </div>
+
+            <!-- Edit toolbar -->
+            <div class="edit-toolbar">
+              <button
+                class="btn-action btn-cut"
+                id="btn-cut"
+                title="Remove selected region"
+              >
+                ✂ Cut Selection
+              </button>
+              <button
+                class="btn-action btn-keep"
+                id="btn-keep"
+                title="Keep only selected region"
+              >
+                ⬛ Keep Selection
+              </button>
+              <button
+                class="btn-action btn-reset"
+                id="btn-undo"
+                title="Undo last edit"
+              >
+                ↩ Undo
+              </button>
+              <button
+                class="btn-action btn-reset"
+                id="btn-clear-sel"
+                title="Clear selection"
+              >
+                ✕ Clear Sel.
+              </button>
+              <button
+                class="btn-action btn-dl"
+                id="btn-dl"
+                title="Download edited audio"
+                style="margin-left: auto"
+              >
+                ⬇ Download
+              </button>
+            </div>
+            <p
+              style="
+                font-size: 11px;
+                color: var(--muted);
+                font-family: var(--mono);
+              "
+            >
+              Click &amp; drag on the waveform to select a region. Right-click a
+              segment below to remove it.
+            </p>
+          </div>
+          <div id="status-bar">
+            Ready — <span id="status-txt">no file loaded</span>
+          </div>
+        </div>
+
+        <!-- Segments / join queue -->
+        <div class="panel" id="segments-panel" style="display: none">
+          <div class="panel-head">
+            <h2>📋 Audio Segments</h2>
+            <button
+              class="btn-action btn-dl"
+              id="btn-join"
+              style="padding: 6px 14px; font-size: 11px"
+            >
+              ⚡ Join &amp; Export All
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="segment-list" id="segment-list"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /main-col -->
+
+      <!-- ══ SIDE COLUMN ══ -->
+      <div class="side-col">
+        <!-- Sidebar Ad -->
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+
+        <!-- Tips -->
+        <div class="panel">
+          <div class="panel-head"><h2>💡 Quick Tips</h2></div>
+          <div class="panel-body">
+            <div class="tip-list">
+              <div class="tip">
+                <div class="tip-icon">🖱</div>
+                <div>
+                  Click &amp; drag on the waveform to select a region for
+                  cutting or keeping.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">✂</div>
+                <div>
+                  <strong>Cut Selection</strong> removes the highlighted region
+                  from the audio.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">📌</div>
+                <div>
+                  <strong>Keep Selection</strong> discards everything outside
+                  your selection.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">🔀</div>
+                <div>
+                  Upload multiple files and click <strong>+</strong> to load
+                  each onto the waveform to create a joined track.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">↩</div>
+                <div>
+                  Use <strong>Undo</strong> to step back through your edits.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">⬇</div>
+                <div>
+                  Click <strong>Download</strong> to export your final audio as
+                  a WAV file.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Supported formats -->
+        <div class="panel">
+          <div class="panel-head"><h2>📁 Supported Formats</h2></div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-wrap: wrap; gap: 6px"
+          >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >MP3</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >WAV</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >OGG</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >FLAC</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >M4A</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >AAC</span
+            >
+            <span
+              style="
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-family: var(--mono);
+                font-size: 11px;
+              "
+              >WEBM</span
+            >
+          </div>
+        </div>
+
+        <!-- Second sidebar Ad -->
+        <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
+
+        <!-- Related links (SEO) -->
+        <div class="panel">
+          <div class="panel-head"><h2>🔗 Learn More</h2></div>
+          <div
+            class="panel-body"
+            style="display: flex; flex-direction: column; gap: 8px"
+          >
+            <a
+              href="blog.html#trim-audio"
+              style="font-size: 13px; color: var(--muted)"
+              >→ How to Trim Audio Online</a
+            >
+            <a
+              href="blog.html#join-tracks"
+              style="font-size: 13px; color: var(--muted)"
+              >→ Joining Multiple Audio Files</a
+            >
+            <a
+              href="blog.html#wav-vs-mp3"
+              style="font-size: 13px; color: var(--muted)"
+              >→ WAV vs MP3: Which to Use?</a
+            >
+            <a href="faq.html" style="font-size: 13px; color: var(--muted)"
+              >→ Frequently Asked Questions</a
+            >
+          </div>
+        </div>
+      </div>
+      <!-- /side-col -->
+    </div>
+    <!-- /page-wrap -->
+
+    <!-- ── AD BANNER BOTTOM ── -->
+    <div class="ad-bar">
+      <div class="ad-slot ad-banner">Advertisement · 728×60</div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="footer-brand">
+        <div class="logo">Audio<span>Slice</span></div>
+        <p>
+          A free, browser-based audio editor. No sign-up. No uploads to a
+          server. Your files stay on your device.
+        </p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="index.html">Audio Editor</a></li>
+          <li><a href="index.html">Waveform Viewer</a></li>
+          <li><a href="index.html">Audio Cutter</a></li>
+          <li><a href="index.html">Audio Joiner</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      © 2025 AudioSlice — All processing happens in your browser. We never see
+      your audio files.
+    </div>
+
+    <!-- ── TOAST ── -->
+    <div id="toast"></div>
+
+    <!-- ── APP SCRIPT ── -->
+    <script>
+      /* =========================================================
+   AudioSlice — Main App Logic
+   Uses Web Audio API + Canvas for waveform rendering.
+   Editing is done on raw AudioBuffers (lossless).
+   Export encodes to WAV via a simple PCM encoder.
+   ========================================================= */
+
+      (function () {
+        "use strict";
+
+        // // ── Theme Toggle ──
+        // const themeBtn = document.getElementById("theme-toggle");
+        // let dark = true;
+        // themeBtn.addEventListener("click", () => {
+        //   dark = !dark;
+        //   document.documentElement.setAttribute(
+        //     "data-theme",
+        //     dark ? "dark" : "light",
+        //   );
+        //   themeBtn.textContent = dark ? "☀️" : "🌙";
+        // });
+        // ── Theme Toggle ──
+        const themeBtn = document.getElementById("theme-toggle");
+        let dark = localStorage.getItem("theme") !== "light";
+        themeBtn.textContent = dark ? "☀️" : "🌙";
+        themeBtn.addEventListener("click", () => {
+          dark = !dark;
+          const theme = dark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("theme", theme);
+          themeBtn.textContent = dark ? "☀️" : "🌙";
+        });
+
+        // ── Hamburger ──
+        document.getElementById("hamburger").addEventListener("click", () => {
+          document.getElementById("mobile-nav").classList.toggle("open");
+        });
+
+        // ── State ──
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        let uploadedFiles = []; // { name, size, buffer: AudioBuffer }
+        let activeBuffer = null; // currently loaded AudioBuffer
+        let editHistory = []; // stack of AudioBuffers for undo
+        let sourceNode = null;
+        let isPlaying = false;
+        let startTime = 0,
+          pauseOffset = 0;
+        let selStart = null,
+          selEnd = null;
+        let isDragging = false,
+          dragStartX = 0;
+        let segments = []; // { start, end, buffer } for join queue
+
+        const cvs = document.getElementById("waveform-canvas");
+        const tCvs = document.getElementById("timeline-canvas");
+        const cCtx = cvs.getContext("2d");
+        const tCtx = tCvs.getContext("2d");
+        const empty = document.getElementById("waveform-empty");
+        const seekBar = document.getElementById("seek-bar");
+        const timeDisp = document.getElementById("time-display");
+        const statusTxt = document.getElementById("status-txt");
+        const regionInfo = document.getElementById("region-info");
+        const decodeOverlay = document.getElementById("decode-overlay");
+
+        // ── File Upload ──
+        const fileInput = document.getElementById("file-input");
+        const uploadZone = document.getElementById("upload-zone");
+
+        uploadZone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          uploadZone.classList.add("drag-over");
+        });
+        uploadZone.addEventListener("dragleave", () =>
+          uploadZone.classList.remove("drag-over"),
+        );
+        uploadZone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          uploadZone.classList.remove("drag-over");
+          handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener("change", () =>
+          handleFiles(fileInput.files),
+        );
+
+        async function handleFiles(files) {
+          for (const file of files) {
+            if (
+              !file.type.startsWith("audio/") &&
+              !file.name.match(/\.(mp3|wav|ogg|flac|m4a|aac|webm)$/i)
+            ) {
+              toast("Unsupported file: " + file.name, "err");
+              continue;
+            }
+            if (
+              uploadedFiles.find(
+                (f) => f.name === file.name && f.size === file.size,
+              )
+            ) {
+              toast(file.name + " already added", "err");
+              continue;
+            }
+            decodeOverlay.classList.add("show");
+            try {
+              const ab = await file.arrayBuffer();
+              const buffer = await ctx.decodeAudioData(ab);
+              uploadedFiles.push({ name: file.name, size: file.size, buffer });
+              renderFileList();
+              toast("Loaded: " + file.name, "ok");
+            } catch (e) {
+              toast("Could not decode " + file.name, "err");
+            }
+            decodeOverlay.classList.remove("show");
+          }
+          fileInput.value = "";
+        }
+
+        function renderFileList() {
+          const list = document.getElementById("file-list");
+          list.innerHTML = "";
+          document.getElementById("clear-bar").style.display =
+            uploadedFiles.length ? "flex" : "none";
+          uploadedFiles.forEach((f, i) => {
+            const dur = fmt(f.buffer.duration);
+            const kb = (f.size / 1024).toFixed(0);
+            const isActive = activeBuffer === f.buffer;
+            const div = document.createElement("div");
+            div.className = "file-item" + (isActive ? " active" : "");
+            div.innerHTML = `
+        <div class="file-icon">🎵</div>
+        <div class="file-info">
+          <div class="file-name">${esc(f.name)}</div>
+          <div class="file-meta">${dur} · ${kb} KB · ${f.buffer.numberOfChannels}ch · ${f.buffer.sampleRate}Hz</div>
+        </div>
+        <div class="file-actions">
+          <button class="btn-icon btn-add" title="Load onto waveform">+</button>
+          <button class="btn-icon btn-del" title="Remove this file">✕</button>
+        </div>`;
+            div.querySelector(".btn-add").addEventListener("click", (e) => {
+              e.stopPropagation();
+              loadToWaveform(f.buffer, f.name);
+            });
+            div.querySelector(".btn-del").addEventListener("click", (e) => {
+              e.stopPropagation();
+              removeFile(i);
+            });
+            div.addEventListener("click", () =>
+              loadToWaveform(f.buffer, f.name),
+            );
+            list.appendChild(div);
+          });
+        }
+
+        function removeFile(i) {
+          if (activeBuffer === uploadedFiles[i].buffer) {
+            stopAudio();
+            activeBuffer = null;
+            editHistory = [];
+            selStart = selEnd = null;
+            drawWaveform();
+            drawTimeline();
+            empty.style.display = "";
+            setStatus("no file loaded");
+          }
+          uploadedFiles.splice(i, 1);
+          renderFileList();
+          toast("File removed", "ok");
+        }
+
+        document.getElementById("clear-all").addEventListener("click", () => {
+          stopAudio();
+          uploadedFiles = [];
+          activeBuffer = null;
+          editHistory = [];
+          selStart = selEnd = null;
+          segments = [];
+          renderFileList();
+          drawWaveform();
+          drawTimeline();
+          empty.style.display = "";
+          renderSegments();
+          setStatus("no file loaded");
+          toast("All cleared", "ok");
+        });
+
+        document
+          .getElementById("clear-waveform")
+          .addEventListener("click", () => {
+            stopAudio();
+            activeBuffer = null;
+            editHistory = [];
+            selStart = selEnd = null;
+            drawWaveform();
+            drawTimeline();
+            empty.style.display = "";
+            renderFileList();
+            setStatus("no file loaded");
+            toast("Waveform cleared", "ok");
+          });
+
+        // ── Load to Waveform ──
+        function loadToWaveform(buffer, name) {
+          stopAudio();
+          activeBuffer = buffer;
+          editHistory = [buffer];
+          selStart = selEnd = null;
+          empty.style.display = "none";
+          drawWaveform();
+          drawTimeline();
+          renderFileList();
+          setStatus(
+            name +
+              " — " +
+              fmt(buffer.duration) +
+              " · " +
+              buffer.sampleRate +
+              " Hz",
+          );
+          toast("Waveform loaded", "ok");
+        }
+
+        // ── Canvas Sizing ──
+        function resizeCvs() {
+          const w = cvs.parentElement.clientWidth;
+          cvs.width = w;
+          cvs.height = 140;
+          tCvs.width = w;
+          tCvs.height = 24;
+          drawWaveform();
+          drawTimeline();
+        }
+        window.addEventListener("resize", resizeCvs);
+        setTimeout(resizeCvs, 50);
+
+        // ── Waveform Drawing ──
+        function drawWaveform() {
+          const W = cvs.width,
+            H = cvs.height;
+          cCtx.clearRect(0, 0, W, H);
+          if (!activeBuffer) return;
+
+          const data = activeBuffer.getChannelData(0);
+          const step = Math.ceil(data.length / W);
+          const mid = H / 2;
+
+          // background gradient
+          const bg = cCtx.createLinearGradient(0, 0, 0, H);
+          const isDk =
+            document.documentElement.getAttribute("data-theme") !== "light";
+          bg.addColorStop(0, isDk ? "#0d0e10" : "#f4f3ef");
+          bg.addColorStop(1, isDk ? "#141619" : "#eae9e4");
+          cCtx.fillStyle = bg;
+          cCtx.fillRect(0, 0, W, H);
+
+          // grid lines
+          cCtx.strokeStyle = isDk ? "#1c1f24" : "#dddbd4";
+          cCtx.lineWidth = 1;
+          for (let y = H * 0.25; y < H; y += H * 0.25) {
+            cCtx.beginPath();
+            cCtx.moveTo(0, y);
+            cCtx.lineTo(W, y);
+            cCtx.stroke();
+          }
+
+          // selection
+          if (selStart !== null && selEnd !== null) {
+            const dur = activeBuffer.duration;
+            const sx = (Math.min(selStart, selEnd) / dur) * W;
+            const ex = (Math.max(selStart, selEnd) / dur) * W;
+            cCtx.fillStyle = "rgba(245,166,35,0.15)";
+            cCtx.fillRect(sx, 0, ex - sx, H);
+            cCtx.strokeStyle = "#f5a623";
+            cCtx.lineWidth = 1;
+            cCtx.beginPath();
+            cCtx.moveTo(sx, 0);
+            cCtx.lineTo(sx, H);
+            cCtx.stroke();
+            cCtx.beginPath();
+            cCtx.moveTo(ex, 0);
+            cCtx.lineTo(ex, H);
+            cCtx.stroke();
+          }
+
+          // waveform bars
+          for (let x = 0; x < W; x++) {
+            let min = Infinity,
+              max = -Infinity;
+            for (let j = 0; j < step; j++) {
+              const v = data[x * step + j] || 0;
+              if (v < min) min = v;
+              if (v > max) max = v;
+            }
+            const yHi = ((1 - max) / 2) * H;
+            const yLo = ((1 - min) / 2) * H;
+            const inSel =
+              selStart !== null &&
+              selEnd !== null &&
+              (x / W) * activeBuffer.duration >= Math.min(selStart, selEnd) &&
+              (x / W) * activeBuffer.duration <= Math.max(selStart, selEnd);
+            cCtx.strokeStyle = inSel ? "#f5a623" : isDk ? "#3a3f4b" : "#b0ac9e";
+            cCtx.lineWidth = 1;
+            cCtx.beginPath();
+            cCtx.moveTo(x, yHi);
+            cCtx.lineTo(x, yLo);
+            cCtx.stroke();
+          }
+
+          // playhead
+          if (isPlaying || pauseOffset > 0) {
+            const px = (getCurrentTime() / activeBuffer.duration) * W;
+            cCtx.strokeStyle = isDk ? "#ffcc5c" : "#d4860a";
+            cCtx.lineWidth = 2;
+            cCtx.beginPath();
+            cCtx.moveTo(px, 0);
+            cCtx.lineTo(px, H);
+            cCtx.stroke();
+          }
+        }
+
+        function drawTimeline() {
+          const W = tCvs.width,
+            H = tCvs.height;
+          tCtx.clearRect(0, 0, W, H);
+          if (!activeBuffer) return;
+          const dur = activeBuffer.duration;
+          const isDk =
+            document.documentElement.getAttribute("data-theme") !== "light";
+          tCtx.fillStyle = isDk ? "#141619" : "#eae9e4";
+          tCtx.fillRect(0, 0, W, H);
+          tCtx.font = "9px JetBrains Mono, monospace";
+          tCtx.fillStyle = isDk ? "#6b7280" : "#9a9589";
+          const step = chooseStep(dur);
+          for (let t = 0; t <= dur; t += step) {
+            const x = (t / dur) * W;
+            tCtx.fillStyle = isDk ? "#2a2d34" : "#c8c5bc";
+            tCtx.fillRect(x, 0, 1, H);
+            tCtx.fillStyle = isDk ? "#6b7280" : "#9a9589";
+            tCtx.fillText(fmtShort(t), x + 2, H - 4);
+          }
+        }
+
+        function chooseStep(dur) {
+          if (dur < 10) return 1;
+          if (dur < 60) return 5;
+          if (dur < 300) return 15;
+          if (dur < 600) return 30;
+          return 60;
+        }
+
+        // ── Mouse / Touch on waveform ──
+        cvs.addEventListener("mousedown", startDrag);
+        cvs.addEventListener("mousemove", onDrag);
+        cvs.addEventListener("mouseup", endDrag);
+        cvs.addEventListener("mouseleave", endDrag);
+        cvs.addEventListener("touchstart", (e) => startDrag(e.touches[0]), {
+          passive: true,
+        });
+        cvs.addEventListener(
+          "touchmove",
+          (e) => {
+            e.preventDefault();
+            onDrag(e.touches[0]);
+          },
+          { passive: false },
+        );
+        cvs.addEventListener("touchend", (e) => endDrag(e.changedTouches[0]));
+
+        function xToTime(x) {
+          if (!activeBuffer) return 0;
+          return Math.max(
+            0,
+            Math.min(
+              activeBuffer.duration,
+              (x / cvs.width) * activeBuffer.duration,
+            ),
+          );
+        }
+
+        function startDrag(e) {
+          if (!activeBuffer) return;
+          isDragging = true;
+          dragStartX = e.clientX - cvs.getBoundingClientRect().left;
+          selStart = xToTime(dragStartX);
+          selEnd = selStart;
+          drawWaveform();
+          updateRegionInfo();
+        }
+        function onDrag(e) {
+          if (!isDragging || !activeBuffer) return;
+          const x = e.clientX - cvs.getBoundingClientRect().left;
+          selEnd = xToTime(x);
+          drawWaveform();
+          updateRegionInfo();
+        }
+        function endDrag(e) {
+          if (!isDragging) return;
+          isDragging = false;
+          const x = e.clientX - cvs.getBoundingClientRect().left;
+          selEnd = xToTime(x);
+          if (Math.abs(selEnd - selStart) < 0.01) {
+            selStart = selEnd = null;
+          }
+          drawWaveform();
+          updateRegionInfo();
+        }
+
+        function updateRegionInfo() {
+          if (
+            selStart !== null &&
+            selEnd !== null &&
+            Math.abs(selEnd - selStart) > 0.01
+          ) {
+            const a = Math.min(selStart, selEnd),
+              b = Math.max(selStart, selEnd);
+            regionInfo.style.display = "";
+            regionInfo.textContent =
+              fmt(a) + " → " + fmt(b) + "  (" + fmt(b - a) + ")";
+          } else {
+            regionInfo.style.display = "none";
+          }
+        }
+
+        // ── Playback ──
+        document
+          .getElementById("btn-play")
+          .addEventListener("click", togglePlay);
+        document
+          .getElementById("btn-stop")
+          .addEventListener("click", stopAudio);
+        seekBar.addEventListener("input", () => {
+          if (!activeBuffer) return;
+          pauseOffset =
+            (parseFloat(seekBar.value) / 1000) * activeBuffer.duration;
+          if (isPlaying) {
+            stopAudio(true);
+            playFrom(pauseOffset);
+          }
+          drawWaveform();
+        });
+        document
+          .getElementById("vol-bar")
+          .addEventListener("input", function () {
+            if (sourceNode && sourceNode.gainNode)
+              sourceNode.gainNode.gain.value = this.value;
+          });
+
+        function togglePlay() {
+          if (!activeBuffer) {
+            toast("Load a file first", "err");
+            return;
+          }
+          isPlaying ? stopAudio(true) : playFrom(pauseOffset);
+        }
+
+        function playFrom(offset) {
+          if (sourceNode) {
+            try {
+              sourceNode.stop();
+            } catch (e) {}
+          }
+          const gain = ctx.createGain();
+          gain.gain.value = parseFloat(
+            document.getElementById("vol-bar").value,
+          );
+          gain.connect(ctx.destination);
+          const src = ctx.createBufferSource();
+          src.buffer = activeBuffer;
+          src.connect(gain);
+          src.gainNode = gain;
+          src.start(0, offset);
+          src.onended = () => {
+            if (isPlaying) {
+              isPlaying = false;
+              pauseOffset = 0;
+              document.getElementById("btn-play").textContent = "▶";
+              drawWaveform();
+            }
+          };
+          sourceNode = src;
+          startTime = ctx.currentTime - offset;
+          isPlaying = true;
+          document.getElementById("btn-play").textContent = "⏸";
+          rafLoop();
+        }
+
+        function stopAudio(pause) {
+          if (sourceNode) {
+            try {
+              sourceNode.stop();
+            } catch (e) {}
+            sourceNode = null;
+          }
+          if (!pause) pauseOffset = 0;
+          else pauseOffset = getCurrentTime();
+          isPlaying = false;
+          document.getElementById("btn-play").textContent = "▶";
+          drawWaveform();
+        }
+
+        function getCurrentTime() {
+          if (isPlaying)
+            return Math.min(
+              ctx.currentTime - startTime,
+              activeBuffer ? activeBuffer.duration : 0,
+            );
+          return pauseOffset;
+        }
+
+        function rafLoop() {
+          if (!isPlaying) return;
+          const t = getCurrentTime(),
+            dur = activeBuffer ? activeBuffer.duration : 1;
+          seekBar.value = (t / dur) * 1000;
+          timeDisp.textContent = fmt(t) + " / " + fmt(dur);
+          drawWaveform();
+          requestAnimationFrame(rafLoop);
+        }
+
+        // ── Editing ──
+        document
+          .getElementById("btn-cut")
+          .addEventListener("click", cutSelection);
+        document
+          .getElementById("btn-keep")
+          .addEventListener("click", keepSelection);
+        document.getElementById("btn-undo").addEventListener("click", undoEdit);
+        document
+          .getElementById("btn-clear-sel")
+          .addEventListener("click", () => {
+            selStart = selEnd = null;
+            drawWaveform();
+            updateRegionInfo();
+          });
+        document
+          .getElementById("btn-dl")
+          .addEventListener("click", downloadAudio);
+        document
+          .getElementById("btn-join")
+          .addEventListener("click", joinAndDownload);
+
+        function hasSelection() {
+          return (
+            selStart !== null &&
+            selEnd !== null &&
+            Math.abs(selEnd - selStart) > 0.01
+          );
+        }
+
+        function sliceBuffer(buf, from, to) {
+          const sr = buf.sampleRate,
+            ch = buf.numberOfChannels;
+          const start = Math.floor(from * sr),
+            end = Math.floor(to * sr);
+          const len = end - start;
+          const out = ctx.createBuffer(ch, len, sr);
+          for (let c = 0; c < ch; c++) {
+            out
+              .getChannelData(c)
+              .set(buf.getChannelData(c).subarray(start, end));
+          }
+          return out;
+        }
+
+        function concatBuffers(a, b) {
+          const sr = a.sampleRate,
+            ch = a.numberOfChannels;
+          const out = ctx.createBuffer(ch, a.length + b.length, sr);
+          for (let c = 0; c < ch; c++) {
+            const d = out.getChannelData(c);
+            d.set(a.getChannelData(c), 0);
+            d.set(b.getChannelData(c), a.length);
+          }
+          return out;
+        }
+
+        function cutSelection() {
+          if (!activeBuffer) {
+            toast("Load a file first", "err");
+            return;
+          }
+          if (!hasSelection()) {
+            toast("Select a region first", "err");
+            return;
+          }
+          const a = Math.min(selStart, selEnd),
+            b = Math.max(selStart, selEnd);
+          const before = a > 0.001 ? sliceBuffer(activeBuffer, 0, a) : null;
+          const after =
+            b < activeBuffer.duration - 0.001
+              ? sliceBuffer(activeBuffer, b, activeBuffer.duration)
+              : null;
+          let result = before || after;
+          if (before && after) result = concatBuffers(before, after);
+          if (!result) {
+            toast("Cannot cut entire audio", "err");
+            return;
+          }
+          applyEdit(result);
+          selStart = selEnd = null;
+          updateRegionInfo();
+          toast("Selection removed (" + fmt(b - a) + ")", "ok");
+        }
+
+        function keepSelection() {
+          if (!activeBuffer) {
+            toast("Load a file first", "err");
+            return;
+          }
+          if (!hasSelection()) {
+            toast("Select a region first", "err");
+            return;
+          }
+          const a = Math.min(selStart, selEnd),
+            b = Math.max(selStart, selEnd);
+          const result = sliceBuffer(activeBuffer, a, b);
+          applyEdit(result);
+          selStart = selEnd = null;
+          updateRegionInfo();
+          toast("Kept " + fmt(b - a) + " selection", "ok");
+        }
+
+        function applyEdit(newBuf) {
+          editHistory.push(activeBuffer);
+          if (editHistory.length > 30) editHistory.shift();
+          stopAudio();
+          activeBuffer = newBuf;
+          pauseOffset = 0;
+          drawWaveform();
+          drawTimeline();
+          setStatus("Edited — " + fmt(newBuf.duration));
+        }
+
+        function undoEdit() {
+          if (editHistory.length < 2) {
+            toast("Nothing to undo", "err");
+            return;
+          }
+          editHistory.pop();
+          stopAudio();
+          activeBuffer = editHistory[editHistory.length - 1];
+          pauseOffset = 0;
+          selStart = selEnd = null;
+          drawWaveform();
+          drawTimeline();
+          updateRegionInfo();
+          setStatus("Undone — " + fmt(activeBuffer.duration));
+          toast("Undone", "ok");
+        }
+
+        // ── Segments for join ──
+        function renderSegments() {
+          const panel = document.getElementById("segments-panel");
+          const list = document.getElementById("segment-list");
+          list.innerHTML = "";
+          if (segments.length === 0) {
+            panel.style.display = "none";
+            return;
+          }
+          panel.style.display = "";
+          segments.forEach((seg, i) => {
+            const div = document.createElement("div");
+            div.className = "segment-item";
+            div.innerHTML = `<div class="seg-index">${i + 1}</div>
+        <div class="seg-times">${fmt(seg.start)} → ${fmt(seg.end)}</div>
+        <div class="seg-dur">${fmt(seg.end - seg.start)}</div>
+        <button class="btn-icon btn-del" title="Remove segment">✕</button>`;
+            div.querySelector(".btn-del").addEventListener("click", () => {
+              segments.splice(i, 1);
+              renderSegments();
+            });
+            list.appendChild(div);
+          });
+        }
+
+        // ── WAV Export ──
+        function bufferToWav(buffer) {
+          const numCh = buffer.numberOfChannels;
+          const sr = buffer.sampleRate;
+          const len = buffer.length;
+          const ab = new ArrayBuffer(44 + len * numCh * 2);
+          const view = new DataView(ab);
+          function writeStr(o, s) {
+            for (let i = 0; i < s.length; i++)
+              view.setUint8(o + i, s.charCodeAt(i));
+          }
+          writeStr(0, "RIFF");
+          view.setUint32(4, 36 + len * numCh * 2, true);
+          writeStr(8, "WAVE");
+          writeStr(12, "fmt ");
+          view.setUint32(16, 16, true);
+          view.setUint16(20, 1, true);
+          view.setUint16(22, numCh, true);
+          view.setUint32(24, sr, true);
+          view.setUint32(28, sr * numCh * 2, true);
+          view.setUint16(32, numCh * 2, true);
+          view.setUint16(34, 16, true);
+          writeStr(36, "data");
+          view.setUint32(40, len * numCh * 2, true);
+          let offset = 44;
+          for (let i = 0; i < len; i++) {
+            for (let c = 0; c < numCh; c++) {
+              const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
+              view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+              offset += 2;
+            }
+          }
+          return ab;
+        }
+
+        function downloadBuffer(buffer, name) {
+          const wav = bufferToWav(buffer);
+          const blob = new Blob([wav], { type: "audio/wav" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+        }
+
+        function downloadAudio() {
+          if (!activeBuffer) {
+            toast("Nothing to download", "err");
+            return;
+          }
+          downloadBuffer(activeBuffer, "audioslice-export.wav");
+          toast("Download started!", "ok");
+        }
+
+        function joinAndDownload() {
+          if (!activeBuffer) {
+            toast("No audio loaded", "err");
+            return;
+          }
+          downloadBuffer(activeBuffer, "audioslice-joined.wav");
+          toast("Joined export started!", "ok");
+        }
+
+        // ── Helpers ──
+        function fmt(s) {
+          if (!isFinite(s)) return "0:00.000";
+          const m = Math.floor(s / 60);
+          const sec = (s % 60).toFixed(3).padStart(6, "0");
+          return m + ":" + sec;
+        }
+        function fmtShort(s) {
+          const m = Math.floor(s / 60),
+            sec = Math.floor(s % 60);
+          return m > 0
+            ? m + "m" + String(sec).padStart(2, "0") + "s"
+            : sec + "s";
+        }
+        function esc(s) {
+          return s
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function setStatus(msg) {
+          statusTxt.textContent = msg;
+        }
+
+        let toastTimer;
+        function toast(msg, type) {
+          const el = document.getElementById("toast");
+          el.textContent = msg;
+          el.className = "show " + (type || "");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => (el.className = ""), 2800);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+          if (e.target.tagName === "INPUT") return;
+          if (e.code === "Space") {
+            e.preventDefault();
+            togglePlay();
+          }
+          if (e.code === "KeyZ" && (e.ctrlKey || e.metaKey)) undoEdit();
+        });
+      })();
+    </script>
+  </body>
+</html>

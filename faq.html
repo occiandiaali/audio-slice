@@ -192,6 +192,9 @@
       [data-theme="light"] .theme-btn {
         background: #1a1b1e;
       }
+      [data-theme="light"] .faq-a code {
+        color: #1a1b1e;
+      }
       .theme-btn {
         background: var(--bg3);
         border: 1px solid var(--border);
@@ -753,16 +756,7 @@
       //   .addEventListener("click", () =>
       //     document.getElementById("mobile-nav").classList.toggle("open"),
       //   );
-      // document.querySelectorAll(".faq-q").forEach((btn) => {
-      //   btn.addEventListener("click", () => {
-      //     const item = btn.closest(".faq-item");
-      //     const wasOpen = item.classList.contains("open");
-      //     document
-      //       .querySelectorAll(".faq-item")
-      //       .forEach((i) => i.classList.remove("open"));
-      //     if (!wasOpen) item.classList.add("open");
-      //   });
-      // });
+
       (function () {
         const btn = document.getElementById("theme-toggle");
         let dark = localStorage.getItem("theme") !== "light";
@@ -780,6 +774,17 @@
             document.getElementById("mobile-nav").classList.toggle("open"),
           );
       })();
+
+      document.querySelectorAll(".faq-q").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const item = btn.closest(".faq-item");
+          const wasOpen = item.classList.contains("open");
+          document
+            .querySelectorAll(".faq-item")
+            .forEach((i) => i.classList.remove("open"));
+          if (!wasOpen) item.classList.add("open");
+        });
+      });
     </script>
   </body>
 </html>

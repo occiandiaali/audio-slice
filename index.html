@@ -14,28 +14,28 @@
       content="audio editor online, waveform cutter, trim audio, cut mp3 online, join audio, free audio editor"
     />
     <link rel="canonical" href="https://audioslice.app/" />
-    <!-- Open Graph -->
     <meta property="og:title" content="AudioSlice — Free Online Audio Editor" />
     <meta
       property="og:description"
       content="Upload, visualize, cut, join and download audio files — all in your browser."
     />
     <meta property="og:type" content="website" />
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Theme persistence: runs before paint to avoid flash -->
     <script>
       (function () {
-        const saved = localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("data-theme", saved);
+        const s = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", s);
       })();
     </script>
+
     <style>
-      /* ─── TOKENS ─────────────────────────────────────── */
+      /* ── TOKENS ── */
       :root {
         --bg: #0d0e10;
         --bg2: #141619;
@@ -46,12 +46,12 @@
         --red: #e8473f;
         --green: #39d98a;
         --blue: #4d9de0;
+        --purple: #9b7fe8;
         --text: #e8eaf0;
         --muted: #6b7280;
         --mono: "JetBrains Mono", monospace;
         --sans: "Syne", sans-serif;
         --radius: 6px;
-        --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
       }
       [data-theme="light"] {
         --bg: #f4f3ef;
@@ -62,7 +62,7 @@
         --muted: #7a7770;
       }
 
-      /* ─── RESET ─────────────────────────────────────── */
+      /* ── RESET ── */
       *,
       *::before,
       *::after {
@@ -97,7 +97,7 @@
         cursor: pointer;
       }
 
-      /* ─── AD SLOTS ───────────────────────────────────── */
+      /* ── ADS ── */
       .ad-slot {
         background: var(--bg3);
         border: 1px dashed var(--border);
@@ -123,8 +123,11 @@
         width: 100%;
         height: 60px;
       }
+      .ad-bar {
+        padding: 8px 24px;
+      }
 
-      /* ─── HEADER ─────────────────────────────────────── */
+      /* ── HEADER ── */
       header {
         position: sticky;
         top: 0;
@@ -168,7 +171,6 @@
       nav a.active {
         color: var(--text);
       }
-
       [data-theme="light"] nav a.active {
         color: wheat;
       }
@@ -196,16 +198,32 @@
         display: none;
         background: none;
         /* color: var(--text); */
-        color: white;
         font-size: 22px;
+        color: white;
+      }
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        top: 56px;
+        background: var(--bg2);
+        z-index: 99;
+        flex-direction: column;
+        border-top: 1px solid var(--border);
+      }
+      .mobile-nav.open {
+        display: flex;
+      }
+      .mobile-nav a {
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        display: block;
       }
 
-      /* ─── AD LEADERBOARD ─────────────────────────────── */
-      .ad-bar {
-        padding: 8px 24px;
-      }
-
-      /* ─── LAYOUT ─────────────────────────────────────── */
+      /* ── LAYOUT ── */
       .page-wrap {
         display: grid;
         grid-template-columns: 1fr 300px;
@@ -226,7 +244,7 @@
         gap: 20px;
       }
 
-      /* ─── PANEL ─────────────────────────────────────── */
+      /* ── PANEL ── */
       .panel {
         background: var(--bg2);
         border: 1px solid var(--border);
@@ -240,6 +258,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 8px;
+        flex-wrap: wrap;
       }
       .panel-head h2 {
         font-size: 12px;
@@ -252,11 +271,11 @@
         padding: 18px;
       }
 
-      /* ─── UPLOAD ZONE ────────────────────────────────── */
+      /* ── UPLOAD ZONE ── */
       .upload-zone {
         border: 2px dashed var(--border);
         border-radius: 8px;
-        padding: 36px 20px;
+        padding: 28px 20px;
         text-align: center;
         cursor: pointer;
         transition:
@@ -277,8 +296,8 @@
         height: 100%;
       }
       .upload-icon {
-        font-size: 36px;
-        margin-bottom: 10px;
+        font-size: 32px;
+        margin-bottom: 8px;
         animation: float 3s ease-in-out infinite;
       }
       @keyframes float {
@@ -299,7 +318,7 @@
         color: var(--amber);
       }
 
-      /* ─── FILE LIST ──────────────────────────────────── */
+      /* ── FILE LIST ── */
       #file-list {
         display: flex;
         flex-direction: column;
@@ -315,14 +334,9 @@
         align-items: center;
         gap: 10px;
         transition: border-color 0.2s;
-        cursor: pointer;
       }
       .file-item:hover {
         border-color: var(--amber);
-      }
-      .file-item.active {
-        border-color: var(--amber);
-        background: rgba(245, 166, 35, 0.07);
       }
       .file-icon {
         font-size: 18px;
@@ -358,13 +372,7 @@
         justify-content: center;
         font-size: 13px;
         transition: background 0.15s;
-      }
-      .btn-edit {
-        background: rgba(77, 157, 224, 0.15);
-        color: var(--blue);
-      }
-      .btn-edit:hover {
-        background: rgba(77, 157, 224, 0.3);
+        flex-shrink: 0;
       }
       .btn-del {
         background: rgba(232, 71, 63, 0.15);
@@ -381,7 +389,7 @@
         background: rgba(57, 217, 138, 0.3);
       }
 
-      /* ─── CLEAR ALL ──────────────────────────────────── */
+      /* ── CLEAR BAR ── */
       .clear-bar {
         display: flex;
         gap: 8px;
@@ -409,43 +417,140 @@
         color: var(--amber);
       }
 
-      /* ─── WAVEFORM AREA ──────────────────────────────── */
-      #waveform-wrap {
+      /* ════════════════════════════════════════════
+       CLIP TIMELINE
+       Each clip = one row with its own waveform canvas + trim handles
+    ════════════════════════════════════════════ */
+      #timeline-area {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
         position: relative;
-        background: var(--bg);
-        border-radius: 8px;
-        overflow: hidden;
-        min-height: 140px;
-        border: 1px solid var(--border);
       }
-      #waveform-canvas {
+
+      /* Shared time ruler across all clips */
+      #time-ruler {
         width: 100%;
+        height: 24px;
         display: block;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .clip-row {
+        display: flex;
+        align-items: stretch;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        transition: background 0.15s;
+      }
+      .clip-row:last-child {
+        border-bottom: none;
+      }
+      .clip-row.selected-row {
+        background: rgba(245, 166, 35, 0.04);
+      }
+
+      /* Left label strip */
+      .clip-label {
+        width: 140px;
+        flex-shrink: 0;
+        padding: 8px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+        border-right: 1px solid var(--border);
+        background: var(--bg2);
+      }
+      .clip-label-name {
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text);
+      }
+      .clip-label-meta {
+        font-size: 10px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      .clip-label-actions {
+        display: flex;
+        gap: 4px;
+        margin-top: 4px;
+      }
+      .clip-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 3px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+      }
+      .clip-btn-sel {
+        background: rgba(245, 166, 35, 0.15);
+        color: var(--amber);
+      }
+      .clip-btn-sel:hover {
+        background: rgba(245, 166, 35, 0.35);
+      }
+      .clip-btn-up {
+        background: rgba(77, 157, 224, 0.15);
+        color: var(--blue);
+      }
+      .clip-btn-up:hover {
+        background: rgba(77, 157, 224, 0.3);
+      }
+      .clip-btn-dn {
+        background: rgba(155, 127, 232, 0.15);
+        color: var(--purple);
+      }
+      .clip-btn-dn:hover {
+        background: rgba(155, 127, 232, 0.3);
+      }
+      .clip-btn-rm {
+        background: rgba(232, 71, 63, 0.15);
+        color: var(--red);
+      }
+      .clip-btn-rm:hover {
+        background: rgba(232, 71, 63, 0.3);
+      }
+
+      /* Waveform canvas wrapper */
+      .clip-canvas-wrap {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        min-height: 80px;
+        background: var(--bg);
         cursor: crosshair;
       }
-      .waveform-empty {
-        position: absolute;
-        inset: 0;
+      .clip-canvas {
+        display: block;
+        width: 100%;
+        height: 80px;
+      }
+
+      /* Empty timeline placeholder */
+      #timeline-empty {
+        padding: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        color: var(--muted);
-        font-size: 13px;
         gap: 8px;
-        pointer-events: none;
       }
-      .waveform-empty .big {
-        font-size: 32px;
-      }
-
-      /* ─── TIMELINE ───────────────────────────────────── */
-      #timeline-canvas {
-        width: 100%;
-        display: block;
+      #timeline-empty .big {
+        font-size: 36px;
       }
 
-      /* ─── PLAYBACK BAR ───────────────────────────────── */
+      /* ── GLOBAL PLAYBACK ── */
       .playback-bar {
         display: flex;
         align-items: center;
@@ -475,7 +580,7 @@
         font-family: var(--mono);
         font-size: 13px;
         color: var(--muted);
-        min-width: 110px;
+        min-width: 130px;
       }
       .seek-wrap {
         flex: 1;
@@ -502,9 +607,6 @@
         align-items: center;
         gap: 6px;
       }
-      .vol-wrap span {
-        font-size: 14px;
-      }
       input[type="range"].vol {
         -webkit-appearance: none;
         width: 70px;
@@ -521,7 +623,7 @@
         background: var(--muted);
       }
 
-      /* ─── EDIT TOOLBAR ───────────────────────────────── */
+      /* ── EDIT TOOLBAR ── */
       .edit-toolbar {
         display: flex;
         gap: 8px;
@@ -538,7 +640,7 @@
         border: 1px solid rgba(245, 166, 35, 0.2);
       }
       .btn-action {
-        padding: 8px 16px;
+        padding: 8px 14px;
         border-radius: var(--radius);
         font-size: 12px;
         font-weight: 700;
@@ -581,47 +683,17 @@
         border-color: var(--muted);
         color: var(--text);
       }
-
-      /* ─── SEGMENTS ───────────────────────────────────── */
-      .segment-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+      .btn-join-export {
+        background: rgba(57, 217, 138, 0.15);
+        color: var(--green);
+        border: 1px solid rgba(57, 217, 138, 0.3);
       }
-      .segment-item {
-        background: var(--bg3);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 8px 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-family: var(--mono);
-        font-size: 12px;
-      }
-      .seg-index {
-        width: 22px;
-        height: 22px;
-        border-radius: 4px;
-        background: rgba(245, 166, 35, 0.15);
-        color: var(--amber);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 11px;
-        flex-shrink: 0;
-      }
-      .seg-times {
-        flex: 1;
-        color: var(--muted);
-      }
-      .seg-dur {
-        color: var(--text);
-        font-weight: 500;
+      .btn-join-export:hover {
+        background: var(--green);
+        color: #0d0e10;
       }
 
-      /* ─── STATUS ─────────────────────────────────────── */
+      /* ── STATUS ── */
       #status-bar {
         font-family: var(--mono);
         font-size: 11px;
@@ -634,7 +706,7 @@
         color: var(--amber);
       }
 
-      /* ─── SIDEBAR WIDGETS ────────────────────────────── */
+      /* ── SIDEBAR ── */
       .tip-list {
         display: flex;
         flex-direction: column;
@@ -654,7 +726,7 @@
         margin-top: 1px;
       }
 
-      /* ─── FOOTER ─────────────────────────────────────── */
+      /* ── FOOTER ── */
       footer {
         border-top: 1px solid var(--border);
         padding: 32px 24px;
@@ -703,7 +775,7 @@
         font-family: var(--mono);
       }
 
-      /* ─── TOAST ──────────────────────────────────────── */
+      /* ── TOAST ── */
       #toast {
         position: fixed;
         bottom: 24px;
@@ -731,70 +803,25 @@
         color: var(--red);
       }
 
-      /* ─── RESPONSIVE ─────────────────────────────────── */
-      @media (max-width: 900px) {
-        .page-wrap {
-          grid-template-columns: 1fr;
-        }
-        .side-col {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-      }
-      @media (max-width: 600px) {
-        nav {
-          display: none;
-        }
-        .hamburger {
-          display: flex;
-        }
-        .side-col {
-          grid-template-columns: 1fr;
-        }
-        .edit-toolbar {
-          gap: 6px;
-        }
-      }
-      .mobile-nav {
-        display: none;
-        position: fixed;
-        inset: 0;
-        top: 56px;
-        background: var(--bg2);
-        z-index: 99;
-        flex-direction: column;
-        gap: 0;
-        border-top: 1px solid var(--border);
-      }
-      .mobile-nav.open {
-        display: flex;
-      }
-      .mobile-nav a {
-        padding: 16px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text);
-        border-bottom: 1px solid var(--border);
-        display: block;
-      }
-      .progress-overlay {
+      /* ── SPINNER ── */
+      .spinner-wrap {
         display: none;
         position: absolute;
         inset: 0;
-        background: rgba(13, 14, 16, 0.8);
+        background: rgba(13, 14, 16, 0.75);
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        z-index: 10;
         border-radius: 8px;
       }
-      .progress-overlay.show {
+      .spinner-wrap.show {
         display: flex;
       }
       .spinner {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border: 3px solid var(--border);
         border-top-color: var(--amber);
         border-radius: 50%;
@@ -805,10 +832,56 @@
           transform: rotate(360deg);
         }
       }
+
+      /* ── PLAYHEAD OVERLAY ── */
+      .playhead-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--amber2);
+        pointer-events: none;
+        z-index: 5;
+        opacity: 0.85;
+        display: none;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        .page-wrap {
+          grid-template-columns: 1fr;
+        }
+        .side-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+      }
+      @media (max-width: 640px) {
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .side-col {
+          grid-template-columns: 1fr;
+        }
+        .clip-label {
+          width: 90px;
+        }
+        .edit-toolbar {
+          gap: 5px;
+        }
+        .btn-action {
+          padding: 7px 10px;
+          font-size: 11px;
+        }
+      }
     </style>
   </head>
   <body>
-    <!-- ── HEADER ── -->
+    <!-- HEADER -->
     <header>
       <div class="logo">
         <span id="audio-label">Audio</span><span>Slice</span>
@@ -834,22 +907,20 @@
       <a href="about.html">About</a>
     </div>
 
-    <!-- ── AD LEADERBOARD ── -->
+    <!-- AD TOP -->
     <div class="ad-bar">
-      <!-- REPLACE WITH REAL AD TAG e.g. Google AdSense -->
       <div class="ad-slot ad-leaderboard">Advertisement · 728×90</div>
     </div>
 
-    <!-- ── MAIN CONTENT ── -->
     <div class="page-wrap">
-      <!-- ══ MAIN COLUMN ══ -->
+      <!-- ══ MAIN ══ -->
       <div class="main-col">
         <!-- Upload -->
         <div class="panel">
           <div class="panel-head">
             <h2>📂 Upload Audio Files</h2>
           </div>
-          <div class="panel-body">
+          <div class="panel-body" style="position: relative">
             <div class="upload-zone" id="upload-zone">
               <input type="file" id="file-input" accept="audio/*" multiple />
               <div class="upload-icon">🎵</div>
@@ -860,59 +931,66 @@
             </div>
             <div id="file-list"></div>
             <div class="clear-bar" id="clear-bar" style="display: none">
-              <button class="btn-outline amber" id="clear-waveform">
-                ⬛ Clear Waveform
+              <button class="btn-outline amber" id="btn-clear-timeline">
+                ⬛ Clear Timeline
               </button>
-              <button class="btn-outline" id="clear-all">
-                🗑 Clear All Files
+              <button class="btn-outline" id="btn-clear-all">
+                🗑 Clear Everything
               </button>
+            </div>
+            <div class="spinner-wrap" id="decode-spinner">
+              <div class="spinner"></div>
+              <div style="font-size: 12px; color: var(--muted)">Decoding…</div>
             </div>
           </div>
         </div>
 
-        <!-- Waveform -->
-        <div class="panel">
+        <!-- Timeline editor -->
+        <div class="panel" id="editor-panel">
           <div class="panel-head">
-            <h2>🎛 Waveform Editor</h2>
+            <h2>🎛 Multi-Clip Timeline</h2>
             <div id="region-info" class="region-info" style="display: none">
               No selection
             </div>
           </div>
-          <div style="position: relative">
-            <div id="waveform-wrap">
-              <canvas id="waveform-canvas" height="140"></canvas>
-              <canvas id="timeline-canvas" height="24"></canvas>
-              <div class="waveform-empty" id="waveform-empty">
+
+          <!-- Clip rows -->
+          <div id="timeline-area">
+            <canvas id="time-ruler"></canvas>
+            <div id="clip-rows">
+              <div id="timeline-empty">
                 <div class="big">〰️</div>
-                <div>Tap a file above to see it here</div>
-              </div>
-              <div class="progress-overlay" id="decode-overlay">
-                <div class="spinner"></div>
-                <div style="font-size: 13px; color: var(--muted)">
-                  Decoding audio…
+                <div>
+                  Add clips from the file list above — each file gets its own
+                  editable track
                 </div>
               </div>
             </div>
           </div>
+
           <div
             class="panel-body"
             style="display: flex; flex-direction: column; gap: 14px"
           >
             <!-- Playback -->
             <div class="playback-bar">
-              <button class="btn-play" id="btn-play" title="Play / Pause">
+              <button
+                class="btn-play"
+                id="btn-play"
+                title="Play all clips (Space)"
+              >
                 ▶
               </button>
               <button
                 class="btn-icon btn-reset"
                 id="btn-stop"
-                title="Stop"
                 style="
                   width: 36px;
                   height: 36px;
                   border-radius: 50%;
                   font-size: 14px;
                 "
+                title="Stop"
               >
                 ⏹
               </button>
@@ -948,40 +1026,44 @@
               <button
                 class="btn-action btn-cut"
                 id="btn-cut"
-                title="Remove selected region"
+                title="Remove selection from active clip"
               >
-                ✂ Cut Selection
+                ✂ Cut
               </button>
               <button
                 class="btn-action btn-keep"
                 id="btn-keep"
-                title="Keep only selected region"
+                title="Keep only selection in active clip"
               >
-                ⬛ Keep Selection
+                ⬛ Keep
               </button>
               <button
                 class="btn-action btn-reset"
                 id="btn-undo"
-                title="Undo last edit"
+                title="Undo last edit on active clip (Ctrl+Z)"
               >
                 ↩ Undo
               </button>
-              <button
-                class="btn-action btn-reset"
-                id="btn-clear-sel"
-                title="Clear selection"
-              >
+              <button class="btn-action btn-reset" id="btn-clear-sel">
                 ✕ Clear Sel.
+              </button>
+              <button
+                class="btn-action btn-join-export"
+                id="btn-join-dl"
+                title="Join all clips in order and download"
+                style="margin-left: auto"
+              >
+                ⚡ Join &amp; Download
               </button>
               <button
                 class="btn-action btn-dl"
                 id="btn-dl"
-                title="Download edited audio"
-                style="margin-left: auto"
+                title="Download active clip only"
               >
-                ⬇ Download
+                ⬇ Clip
               </button>
             </div>
+
             <p
               style="
                 font-size: 11px;
@@ -989,90 +1071,87 @@
                 font-family: var(--mono);
               "
             >
-              Click &amp; drag on the waveform to select a region. Right-click a
-              segment below to remove it.
+              Click a clip row to select it (highlighted border) · Drag on its
+              waveform to mark a region · ✂ Cut removes the region · ⬛ Keep
+              trims to it · ↕ arrows reorder clips · ⚡ Join &amp; Download
+              merges all clips top→bottom
             </p>
           </div>
-          <div id="status-bar">
-            Ready — <span id="status-txt">no file loaded</span>
-          </div>
-        </div>
 
-        <!-- Segments / join queue -->
-        <div class="panel" id="segments-panel" style="display: none">
-          <div class="panel-head">
-            <h2>📋 Audio Segments</h2>
-            <button
-              class="btn-action btn-dl"
-              id="btn-join"
-              style="padding: 6px 14px; font-size: 11px"
-            >
-              ⚡ Join &amp; Export All
-            </button>
-          </div>
-          <div class="panel-body">
-            <div class="segment-list" id="segment-list"></div>
+          <div id="status-bar">
+            Ready — <span id="status-txt">no clips loaded</span>
           </div>
         </div>
       </div>
       <!-- /main-col -->
 
-      <!-- ══ SIDE COLUMN ══ -->
+      <!-- ══ SIDEBAR ══ -->
       <div class="side-col">
-        <!-- Sidebar Ad -->
         <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
 
-        <!-- Tips -->
         <div class="panel">
-          <div class="panel-head"><h2>💡 Quick Tips</h2></div>
+          <div class="panel-head"><h2>💡 How It Works</h2></div>
           <div class="panel-body">
             <div class="tip-list">
               <div class="tip">
-                <div class="tip-icon">🖱</div>
+                <div class="tip-icon">1️⃣</div>
                 <div>
-                  Click &amp; drag on the waveform to select a region for
-                  cutting or keeping.
+                  Upload one or more audio files. Each appears in the file list.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">2️⃣</div>
+                <div>
+                  Click <strong>+</strong> to add a file as a clip in the
+                  timeline. Add as many as you like.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">3️⃣</div>
+                <div>
+                  Click a clip row to select it, then drag on its waveform to
+                  mark a region.
                 </div>
               </div>
               <div class="tip">
                 <div class="tip-icon">✂</div>
                 <div>
-                  <strong>Cut Selection</strong> removes the highlighted region
-                  from the audio.
-                </div>
-              </div>
-              <div class="tip">
-                <div class="tip-icon">📌</div>
-                <div>
-                  <strong>Keep Selection</strong> discards everything outside
-                  your selection.
-                </div>
-              </div>
-              <div class="tip">
-                <div class="tip-icon">🔀</div>
-                <div>
-                  Upload multiple files and click <strong>+</strong> to load
-                  each onto the waveform to create a joined track.
+                  <strong>Cut</strong> removes the selection.
+                  <strong>Keep</strong> trims everything else away.
                 </div>
               </div>
               <div class="tip">
                 <div class="tip-icon">↩</div>
                 <div>
-                  Use <strong>Undo</strong> to step back through your edits.
+                  Each clip has its own undo history (up to 30 steps). Ctrl+Z
+                  undoes on the selected clip.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">↕</div>
+                <div>
+                  Use ↑ ↓ arrows in the clip label to reorder clips before
+                  joining.
+                </div>
+              </div>
+              <div class="tip">
+                <div class="tip-icon">⚡</div>
+                <div>
+                  <strong>Join &amp; Download</strong> merges all clips
+                  top→bottom into one WAV file.
                 </div>
               </div>
               <div class="tip">
                 <div class="tip-icon">⬇</div>
                 <div>
-                  Click <strong>Download</strong> to export your final audio as
-                  a WAV file.
+                  <strong>Clip</strong> downloads only the currently selected
+                  clip as WAV.
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Supported formats -->
         <div class="panel">
           <div class="panel-head"><h2>📁 Supported Formats</h2></div>
           <div
@@ -1159,10 +1238,8 @@
           </div>
         </div>
 
-        <!-- Second sidebar Ad -->
         <div class="ad-slot ad-sidebar">Advertisement · 300×250</div>
 
-        <!-- Related links (SEO) -->
         <div class="panel">
           <div class="panel-head"><h2>🔗 Learn More</h2></div>
           <div
@@ -1194,18 +1271,16 @@
     </div>
     <!-- /page-wrap -->
 
-    <!-- ── AD BANNER BOTTOM ── -->
     <div class="ad-bar">
       <div class="ad-slot ad-banner">Advertisement · 728×60</div>
     </div>
 
-    <!-- ── FOOTER ── -->
     <footer>
       <div class="footer-brand">
         <div class="logo">Audio<span>Slice</span></div>
         <p>
-          A free, browser-based audio editor. No sign-up. No uploads to a
-          server. Your files stay on your device.
+          Free, browser-based audio editor. No sign-up. No uploads to a server.
+          Your files stay on your device.
         </p>
       </div>
       <div>
@@ -1239,79 +1314,77 @@
       your audio files.
     </div>
 
-    <!-- ── TOAST ── -->
     <div id="toast"></div>
 
-    <!-- ── APP SCRIPT ── -->
     <script>
-      /* =========================================================
-   AudioSlice — Main App Logic
-   Uses Web Audio API + Canvas for waveform rendering.
-   Editing is done on raw AudioBuffers (lossless).
-   Export encodes to WAV via a simple PCM encoder.
-   ========================================================= */
-
+      /* =============================================================
+   AudioSlice — Multi-Clip Timeline Engine
+   Architecture:
+     uploadedFiles[]  — decoded AudioBuffers from uploads
+     clips[]          — ordered list of clip objects, each with:
+                          { id, name, buffer (current), history[], canvas, selStart, selEnd }
+     selectedClipId   — which clip is active for editing
+     Playback merges all clip buffers in order into one buffer on play.
+   ============================================================= */
       (function () {
         "use strict";
 
-        // // ── Theme Toggle ──
-        // const themeBtn = document.getElementById("theme-toggle");
-        // let dark = true;
-        // themeBtn.addEventListener("click", () => {
-        //   dark = !dark;
-        //   document.documentElement.setAttribute(
-        //     "data-theme",
-        //     dark ? "dark" : "light",
-        //   );
-        //   themeBtn.textContent = dark ? "☀️" : "🌙";
-        // });
-        // ── Theme Toggle ──
+        /* ── Theme ── */
         const themeBtn = document.getElementById("theme-toggle");
-        let dark = localStorage.getItem("theme") !== "light";
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        let dark = savedTheme !== "light";
         themeBtn.textContent = dark ? "☀️" : "🌙";
         themeBtn.addEventListener("click", () => {
           dark = !dark;
-          const theme = dark ? "dark" : "light";
-          document.documentElement.setAttribute("data-theme", theme);
-          localStorage.setItem("theme", theme);
+          const t = dark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", t);
+          localStorage.setItem("theme", t);
           themeBtn.textContent = dark ? "☀️" : "🌙";
+          renderAllWaveforms();
+          drawRuler();
         });
 
-        // ── Hamburger ──
-        document.getElementById("hamburger").addEventListener("click", () => {
-          document.getElementById("mobile-nav").classList.toggle("open");
-        });
+        document
+          .getElementById("hamburger")
+          .addEventListener("click", () =>
+            document.getElementById("mobile-nav").classList.toggle("open"),
+          );
 
-        // ── State ──
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        let uploadedFiles = []; // { name, size, buffer: AudioBuffer }
-        let activeBuffer = null; // currently loaded AudioBuffer
-        let editHistory = []; // stack of AudioBuffers for undo
+        /* ── Audio context ── */
+        const AC = new (window.AudioContext || window.webkitAudioContext)();
+
+        /* ── State ── */
+        let uploadedFiles = []; // { id, name, size, buffer }
+        let clips = []; // { id, name, buffer, history, canvas, wrap, selStart, selEnd }
+        let selectedClipId = null;
+        let clipIdCounter = 0;
+        let fileIdCounter = 0;
+
+        /* Playback */
         let sourceNode = null;
+        let gainNode = null;
         let isPlaying = false;
-        let startTime = 0,
-          pauseOffset = 0;
-        let selStart = null,
-          selEnd = null;
-        let isDragging = false,
-          dragStartX = 0;
-        let segments = []; // { start, end, buffer } for join queue
+        let playStart = 0; // AC.currentTime when play began
+        let playOffset = 0; // seconds into merged buffer
+        let mergedBuffer = null; // last merged buffer used for playback
+        let rafId = null;
 
-        const cvs = document.getElementById("waveform-canvas");
-        const tCvs = document.getElementById("timeline-canvas");
-        const cCtx = cvs.getContext("2d");
-        const tCtx = tCvs.getContext("2d");
-        const empty = document.getElementById("waveform-empty");
+        /* ── DOM refs ── */
+        const fileInput = document.getElementById("file-input");
+        const uploadZone = document.getElementById("upload-zone");
+        const fileList = document.getElementById("file-list");
+        const clipRows = document.getElementById("clip-rows");
+        const timelineEmpty = document.getElementById("timeline-empty");
+        const ruler = document.getElementById("time-ruler");
         const seekBar = document.getElementById("seek-bar");
         const timeDisp = document.getElementById("time-display");
         const statusTxt = document.getElementById("status-txt");
         const regionInfo = document.getElementById("region-info");
-        const decodeOverlay = document.getElementById("decode-overlay");
+        const spinner = document.getElementById("decode-spinner");
+        const clearBar = document.getElementById("clear-bar");
+        const volBar = document.getElementById("vol-bar");
 
-        // ── File Upload ──
-        const fileInput = document.getElementById("file-input");
-        const uploadZone = document.getElementById("upload-zone");
-
+        /* ── Upload ── */
         uploadZone.addEventListener("dragover", (e) => {
           e.preventDefault();
           uploadZone.classList.add("drag-over");
@@ -1324,9 +1397,10 @@
           uploadZone.classList.remove("drag-over");
           handleFiles(e.dataTransfer.files);
         });
-        fileInput.addEventListener("change", () =>
-          handleFiles(fileInput.files),
-        );
+        fileInput.addEventListener("change", () => {
+          handleFiles(fileInput.files);
+          fileInput.value = "";
+        });
 
         async function handleFiles(files) {
           for (const file of files) {
@@ -1334,7 +1408,7 @@
               !file.type.startsWith("audio/") &&
               !file.name.match(/\.(mp3|wav|ogg|flac|m4a|aac|webm)$/i)
             ) {
-              toast("Unsupported file: " + file.name, "err");
+              toast("Unsupported: " + file.name, "err");
               continue;
             }
             if (
@@ -1342,653 +1416,770 @@
                 (f) => f.name === file.name && f.size === file.size,
               )
             ) {
-              toast(file.name + " already added", "err");
+              toast(file.name + " already uploaded", "err");
               continue;
             }
-            decodeOverlay.classList.add("show");
+            spinner.classList.add("show");
             try {
               const ab = await file.arrayBuffer();
-              const buffer = await ctx.decodeAudioData(ab);
-              uploadedFiles.push({ name: file.name, size: file.size, buffer });
+              const buf = await AC.decodeAudioData(ab);
+              uploadedFiles.push({
+                id: fileIdCounter++,
+                name: file.name,
+                size: file.size,
+                buffer: buf,
+              });
               renderFileList();
               toast("Loaded: " + file.name, "ok");
             } catch (e) {
               toast("Could not decode " + file.name, "err");
             }
-            decodeOverlay.classList.remove("show");
+            spinner.classList.remove("show");
           }
-          fileInput.value = "";
         }
 
         function renderFileList() {
-          const list = document.getElementById("file-list");
-          list.innerHTML = "";
-          document.getElementById("clear-bar").style.display =
-            uploadedFiles.length ? "flex" : "none";
-          uploadedFiles.forEach((f, i) => {
-            const dur = fmt(f.buffer.duration);
-            const kb = (f.size / 1024).toFixed(0);
-            const isActive = activeBuffer === f.buffer;
+          fileList.innerHTML = "";
+          clearBar.style.display = uploadedFiles.length ? "flex" : "none";
+          uploadedFiles.forEach((f) => {
             const div = document.createElement("div");
-            div.className = "file-item" + (isActive ? " active" : "");
+            div.className = "file-item";
             div.innerHTML = `
-        <div class="file-icon">🎵</div>
-        <div class="file-info">
-          <div class="file-name">${esc(f.name)}</div>
-          <div class="file-meta">${dur} · ${kb} KB · ${f.buffer.numberOfChannels}ch · ${f.buffer.sampleRate}Hz</div>
-        </div>
-        <div class="file-actions">
-          <button class="btn-icon btn-add" title="Load onto waveform">+</button>
-          <button class="btn-icon btn-del" title="Remove this file">✕</button>
-        </div>`;
+      <div class="file-icon">🎵</div>
+      <div class="file-info">
+        <div class="file-name">${esc(f.name)}</div>
+        <div class="file-meta">${fmt(f.buffer.duration)} · ${(f.size / 1024).toFixed(0)} KB · ${f.buffer.sampleRate} Hz</div>
+      </div>
+      <div class="file-actions">
+        <button class="btn-icon btn-add" title="Add to timeline">＋</button>
+        <button class="btn-icon btn-del" title="Remove file">✕</button>
+      </div>`;
             div.querySelector(".btn-add").addEventListener("click", (e) => {
               e.stopPropagation();
-              loadToWaveform(f.buffer, f.name);
+              addClip(f);
             });
             div.querySelector(".btn-del").addEventListener("click", (e) => {
               e.stopPropagation();
-              removeFile(i);
+              removeUploadedFile(f.id);
             });
-            div.addEventListener("click", () =>
-              loadToWaveform(f.buffer, f.name),
-            );
-            list.appendChild(div);
+            div.addEventListener("click", () => addClip(f));
+            fileList.appendChild(div);
           });
         }
 
-        function removeFile(i) {
-          if (activeBuffer === uploadedFiles[i].buffer) {
-            stopAudio();
-            activeBuffer = null;
-            editHistory = [];
-            selStart = selEnd = null;
-            drawWaveform();
-            drawTimeline();
-            empty.style.display = "";
-            setStatus("no file loaded");
-          }
-          uploadedFiles.splice(i, 1);
+        function removeUploadedFile(id) {
+          uploadedFiles = uploadedFiles.filter((f) => f.id !== id);
           renderFileList();
           toast("File removed", "ok");
         }
 
-        document.getElementById("clear-all").addEventListener("click", () => {
-          stopAudio();
-          uploadedFiles = [];
-          activeBuffer = null;
-          editHistory = [];
-          selStart = selEnd = null;
-          segments = [];
-          renderFileList();
-          drawWaveform();
-          drawTimeline();
-          empty.style.display = "";
-          renderSegments();
-          setStatus("no file loaded");
-          toast("All cleared", "ok");
+        /* ── Clip management ── */
+        function addClip(file) {
+          stopPlayback();
+          const id = clipIdCounter++;
+          const clip = {
+            id,
+            name: file.name,
+            buffer: file.buffer,
+            history: [file.buffer],
+            canvas: null,
+            wrap: null,
+            selStart: null,
+            selEnd: null,
+          };
+          clips.push(clip);
+          renderClips();
+          selectClip(id);
+          toast("Added: " + file.name, "ok");
+          setStatus(clips.length + " clip(s) · total " + fmt(totalDuration()));
+        }
+
+        function removeClip(id) {
+          stopPlayback();
+          clips = clips.filter((c) => c.id !== id);
+          if (selectedClipId === id)
+            selectedClipId = clips.length ? clips[0].id : null;
+          renderClips();
+          updateRegionInfoUI();
+          setStatus(
+            clips.length
+              ? clips.length + " clip(s) · total " + fmt(totalDuration())
+              : "no clips loaded",
+          );
+        }
+
+        function moveClip(id, dir) {
+          const i = clips.findIndex((c) => c.id === id);
+          const j = i + dir;
+          if (j < 0 || j >= clips.length) return;
+          [clips[i], clips[j]] = [clips[j], clips[i]];
+          renderClips();
+          selectClip(id);
+        }
+
+        function selectClip(id) {
+          selectedClipId = id;
+          clips.forEach((c) => {
+            if (c.wrap) c.wrap.classList.toggle("selected-row", c.id === id);
+          });
+          updateRegionInfoUI();
+        }
+
+        function getSelected() {
+          return clips.find((c) => c.id === selectedClipId) || null;
+        }
+
+        /* ── Render clip rows ── */
+        function renderClips() {
+          clipRows.innerHTML = "";
+          if (clips.length === 0) {
+            clipRows.appendChild(timelineEmpty);
+            drawRuler(0);
+            return;
+          }
+          drawRuler(totalDuration());
+          clips.forEach((clip, idx) => {
+            const row = document.createElement("div");
+            row.className =
+              "clip-row" + (clip.id === selectedClipId ? " selected-row" : "");
+            row.innerHTML = `
+      <div class="clip-label">
+        <div class="clip-label-name" title="${esc(clip.name)}">${esc(shortName(clip.name))}</div>
+        <div class="clip-label-meta">${fmt(clip.buffer.duration)}</div>
+        <div class="clip-label-actions">
+          <button class="clip-btn clip-btn-sel" title="Select clip">◎</button>
+          <button class="clip-btn clip-btn-up"  title="Move up">↑</button>
+          <button class="clip-btn clip-btn-dn"  title="Move down">↓</button>
+          <button class="clip-btn clip-btn-rm"  title="Remove clip">✕</button>
+        </div>
+      </div>
+      <div class="clip-canvas-wrap">
+        <canvas class="clip-canvas" height="80"></canvas>
+      </div>`;
+
+            const wrap = row.querySelector(".clip-canvas-wrap");
+            const canvas = row.querySelector(".clip-canvas");
+            clip.wrap = row;
+            clip.canvas = canvas;
+
+            row
+              .querySelector(".clip-btn-sel")
+              .addEventListener("click", (e) => {
+                e.stopPropagation();
+                selectClip(clip.id);
+              });
+            row.querySelector(".clip-btn-up").addEventListener("click", (e) => {
+              e.stopPropagation();
+              moveClip(clip.id, -1);
+            });
+            row.querySelector(".clip-btn-dn").addEventListener("click", (e) => {
+              e.stopPropagation();
+              moveClip(clip.id, +1);
+            });
+            row.querySelector(".clip-btn-rm").addEventListener("click", (e) => {
+              e.stopPropagation();
+              removeClip(clip.id);
+            });
+            row.addEventListener("click", () => selectClip(clip.id));
+
+            /* Waveform interaction */
+            let dragging = false,
+              dragX0 = 0;
+
+            function pointerX(e) {
+              return (
+                (e.clientX ?? e.touches[0].clientX) -
+                canvas.getBoundingClientRect().left
+              );
+            }
+            function xToTime(x) {
+              return Math.max(
+                0,
+                Math.min(
+                  clip.buffer.duration,
+                  (x / canvas.width) * clip.buffer.duration,
+                ),
+              );
+            }
+
+            canvas.addEventListener("mousedown", (e) => {
+              selectClip(clip.id);
+              dragging = true;
+              dragX0 = pointerX(e);
+              clip.selStart = xToTime(dragX0);
+              clip.selEnd = clip.selStart;
+              drawClipWaveform(clip);
+              updateRegionInfoUI();
+            });
+            canvas.addEventListener("mousemove", (e) => {
+              if (!dragging) return;
+              clip.selEnd = xToTime(pointerX(e));
+              drawClipWaveform(clip);
+              updateRegionInfoUI();
+            });
+            canvas.addEventListener("mouseup", (e) => {
+              dragging = false;
+              clip.selEnd = xToTime(pointerX(e));
+              if (Math.abs((clip.selEnd || 0) - (clip.selStart || 0)) < 0.005) {
+                clip.selStart = clip.selEnd = null;
+              }
+              drawClipWaveform(clip);
+              updateRegionInfoUI();
+            });
+            canvas.addEventListener("mouseleave", () => {
+              dragging = false;
+            });
+
+            canvas.addEventListener(
+              "touchstart",
+              (e) => {
+                selectClip(clip.id);
+                dragging = true;
+                dragX0 = pointerX(e);
+                clip.selStart = xToTime(dragX0);
+                clip.selEnd = clip.selStart;
+                drawClipWaveform(clip);
+                updateRegionInfoUI();
+              },
+              { passive: true },
+            );
+            canvas.addEventListener(
+              "touchmove",
+              (e) => {
+                if (!dragging) return;
+                e.preventDefault();
+                clip.selEnd = xToTime(pointerX(e));
+                drawClipWaveform(clip);
+                updateRegionInfoUI();
+              },
+              { passive: false },
+            );
+            canvas.addEventListener("touchend", (e) => {
+              dragging = false;
+              clip.selEnd = xToTime(pointerX(e.changedTouches[0]));
+              if (Math.abs((clip.selEnd || 0) - (clip.selStart || 0)) < 0.005) {
+                clip.selStart = clip.selEnd = null;
+              }
+              drawClipWaveform(clip);
+              updateRegionInfoUI();
+            });
+
+            clipRows.appendChild(row);
+
+            /* Size canvas then draw */
+            requestAnimationFrame(() => {
+              canvas.width = wrap.clientWidth || wrap.offsetWidth || 600;
+              drawClipWaveform(clip);
+            });
+          });
+        }
+
+        window.addEventListener("resize", () => {
+          clips.forEach((clip) => {
+            if (clip.canvas && clip.wrap) {
+              clip.canvas.width = clip.wrap.clientWidth || 600;
+              drawClipWaveform(clip);
+            }
+          });
+          drawRuler(totalDuration());
         });
 
-        document
-          .getElementById("clear-waveform")
-          .addEventListener("click", () => {
-            stopAudio();
-            activeBuffer = null;
-            editHistory = [];
-            selStart = selEnd = null;
-            drawWaveform();
-            drawTimeline();
-            empty.style.display = "";
-            renderFileList();
-            setStatus("no file loaded");
-            toast("Waveform cleared", "ok");
-          });
-
-        // ── Load to Waveform ──
-        function loadToWaveform(buffer, name) {
-          stopAudio();
-          activeBuffer = buffer;
-          editHistory = [buffer];
-          selStart = selEnd = null;
-          empty.style.display = "none";
-          drawWaveform();
-          drawTimeline();
-          renderFileList();
-          setStatus(
-            name +
-              " — " +
-              fmt(buffer.duration) +
-              " · " +
-              buffer.sampleRate +
-              " Hz",
+        /* ── Waveform drawing ── */
+        function isDark() {
+          return (
+            document.documentElement.getAttribute("data-theme") !== "light"
           );
-          toast("Waveform loaded", "ok");
         }
 
-        // ── Canvas Sizing ──
-        function resizeCvs() {
-          const w = cvs.parentElement.clientWidth;
-          cvs.width = w;
-          cvs.height = 140;
-          tCvs.width = w;
-          tCvs.height = 24;
-          drawWaveform();
-          drawTimeline();
-        }
-        window.addEventListener("resize", resizeCvs);
-        setTimeout(resizeCvs, 50);
+        function drawClipWaveform(clip) {
+          const canvas = clip.canvas;
+          if (!canvas) return;
+          const W = canvas.width,
+            H = canvas.height;
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, W, H);
+          const dk = isDark();
 
-        // ── Waveform Drawing ──
-        function drawWaveform() {
-          const W = cvs.width,
-            H = cvs.height;
-          cCtx.clearRect(0, 0, W, H);
-          if (!activeBuffer) return;
+          /* background */
+          const bg = ctx.createLinearGradient(0, 0, 0, H);
+          bg.addColorStop(0, dk ? "#0d0e10" : "#f4f3ef");
+          bg.addColorStop(1, dk ? "#141619" : "#eae9e4");
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, W, H);
 
-          const data = activeBuffer.getChannelData(0);
-          const step = Math.ceil(data.length / W);
-          const mid = H / 2;
-
-          // background gradient
-          const bg = cCtx.createLinearGradient(0, 0, 0, H);
-          const isDk =
-            document.documentElement.getAttribute("data-theme") !== "light";
-          bg.addColorStop(0, isDk ? "#0d0e10" : "#f4f3ef");
-          bg.addColorStop(1, isDk ? "#141619" : "#eae9e4");
-          cCtx.fillStyle = bg;
-          cCtx.fillRect(0, 0, W, H);
-
-          // grid lines
-          cCtx.strokeStyle = isDk ? "#1c1f24" : "#dddbd4";
-          cCtx.lineWidth = 1;
+          /* grid */
+          ctx.strokeStyle = dk ? "#1c1f24" : "#dddbd4";
+          ctx.lineWidth = 1;
           for (let y = H * 0.25; y < H; y += H * 0.25) {
-            cCtx.beginPath();
-            cCtx.moveTo(0, y);
-            cCtx.lineTo(W, y);
-            cCtx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
           }
 
-          // selection
-          if (selStart !== null && selEnd !== null) {
-            const dur = activeBuffer.duration;
-            const sx = (Math.min(selStart, selEnd) / dur) * W;
-            const ex = (Math.max(selStart, selEnd) / dur) * W;
-            cCtx.fillStyle = "rgba(245,166,35,0.15)";
-            cCtx.fillRect(sx, 0, ex - sx, H);
-            cCtx.strokeStyle = "#f5a623";
-            cCtx.lineWidth = 1;
-            cCtx.beginPath();
-            cCtx.moveTo(sx, 0);
-            cCtx.lineTo(sx, H);
-            cCtx.stroke();
-            cCtx.beginPath();
-            cCtx.moveTo(ex, 0);
-            cCtx.lineTo(ex, H);
-            cCtx.stroke();
+          /* selection highlight */
+          const buf = clip.buffer;
+          if (clip.selStart !== null && clip.selEnd !== null) {
+            const sx =
+              (Math.min(clip.selStart, clip.selEnd) / buf.duration) * W;
+            const ex =
+              (Math.max(clip.selStart, clip.selEnd) / buf.duration) * W;
+            ctx.fillStyle = "rgba(245,166,35,.18)";
+            ctx.fillRect(sx, 0, ex - sx, H);
+            ctx.strokeStyle = "#f5a623";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(sx, 0);
+            ctx.lineTo(sx, H);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(ex, 0);
+            ctx.lineTo(ex, H);
+            ctx.stroke();
           }
 
-          // waveform bars
+          /* waveform bars */
+          const data = buf.getChannelData(0);
+          const step = Math.max(1, Math.ceil(data.length / W));
           for (let x = 0; x < W; x++) {
             let min = Infinity,
               max = -Infinity;
+            const base = x * step;
             for (let j = 0; j < step; j++) {
-              const v = data[x * step + j] || 0;
+              const v = data[base + j] || 0;
               if (v < min) min = v;
               if (v > max) max = v;
             }
-            const yHi = ((1 - max) / 2) * H;
-            const yLo = ((1 - min) / 2) * H;
+            const yHi = ((1 - max) / 2) * H,
+              yLo = ((1 - min) / 2) * H;
             const inSel =
-              selStart !== null &&
-              selEnd !== null &&
-              (x / W) * activeBuffer.duration >= Math.min(selStart, selEnd) &&
-              (x / W) * activeBuffer.duration <= Math.max(selStart, selEnd);
-            cCtx.strokeStyle = inSel ? "#f5a623" : isDk ? "#3a3f4b" : "#b0ac9e";
-            cCtx.lineWidth = 1;
-            cCtx.beginPath();
-            cCtx.moveTo(x, yHi);
-            cCtx.lineTo(x, yLo);
-            cCtx.stroke();
+              clip.selStart !== null &&
+              clip.selEnd !== null &&
+              (x / W) * buf.duration >= Math.min(clip.selStart, clip.selEnd) &&
+              (x / W) * buf.duration <= Math.max(clip.selStart, clip.selEnd);
+            ctx.strokeStyle = inSel ? "#f5a623" : dk ? "#3a3f4b" : "#b0ac9e";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, yHi);
+            ctx.lineTo(x, yLo);
+            ctx.stroke();
           }
 
-          // playhead
-          if (isPlaying || pauseOffset > 0) {
-            const px = (getCurrentTime() / activeBuffer.duration) * W;
-            cCtx.strokeStyle = isDk ? "#ffcc5c" : "#d4860a";
-            cCtx.lineWidth = 2;
-            cCtx.beginPath();
-            cCtx.moveTo(px, 0);
-            cCtx.lineTo(px, H);
-            cCtx.stroke();
-          }
-        }
-
-        function drawTimeline() {
-          const W = tCvs.width,
-            H = tCvs.height;
-          tCtx.clearRect(0, 0, W, H);
-          if (!activeBuffer) return;
-          const dur = activeBuffer.duration;
-          const isDk =
-            document.documentElement.getAttribute("data-theme") !== "light";
-          tCtx.fillStyle = isDk ? "#141619" : "#eae9e4";
-          tCtx.fillRect(0, 0, W, H);
-          tCtx.font = "9px JetBrains Mono, monospace";
-          tCtx.fillStyle = isDk ? "#6b7280" : "#9a9589";
-          const step = chooseStep(dur);
-          for (let t = 0; t <= dur; t += step) {
-            const x = (t / dur) * W;
-            tCtx.fillStyle = isDk ? "#2a2d34" : "#c8c5bc";
-            tCtx.fillRect(x, 0, 1, H);
-            tCtx.fillStyle = isDk ? "#6b7280" : "#9a9589";
-            tCtx.fillText(fmtShort(t), x + 2, H - 4);
+          /* playhead */
+          if (isPlaying || playOffset > 0) {
+            const clipStart = clips
+              .slice(
+                0,
+                clips.findIndex((c) => c.id === clip.id),
+              )
+              .reduce((s, c) => s + c.buffer.duration, 0);
+            const clipEnd = clipStart + buf.duration;
+            const t = currentPlayTime();
+            if (t >= clipStart && t <= clipEnd) {
+              const px = ((t - clipStart) / buf.duration) * W;
+              ctx.strokeStyle = dk ? "#ffcc5c" : "#d4860a";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(px, 0);
+              ctx.lineTo(px, H);
+              ctx.stroke();
+            }
           }
         }
 
-        function chooseStep(dur) {
-          if (dur < 10) return 1;
-          if (dur < 60) return 5;
-          if (dur < 300) return 15;
-          if (dur < 600) return 30;
-          return 60;
+        function renderAllWaveforms() {
+          clips.forEach((c) => drawClipWaveform(c));
         }
 
-        // ── Mouse / Touch on waveform ──
-        cvs.addEventListener("mousedown", startDrag);
-        cvs.addEventListener("mousemove", onDrag);
-        cvs.addEventListener("mouseup", endDrag);
-        cvs.addEventListener("mouseleave", endDrag);
-        cvs.addEventListener("touchstart", (e) => startDrag(e.touches[0]), {
-          passive: true,
+        /* ── Ruler ── */
+        function drawRuler(totalDur) {
+          const W = ruler.parentElement.clientWidth || 800;
+          ruler.width = W;
+          ruler.height = 24;
+          const ctx = ruler.getContext("2d");
+          const dk = isDark();
+          ctx.fillStyle = dk ? "#141619" : "#eae9e4";
+          ctx.fillRect(0, 0, W, 24);
+          if (!totalDur) return;
+          const labelW = 140; /* matches clip-label width */
+          const drawW = W - labelW;
+          const step = chooseStep(totalDur);
+          ctx.font = "9px JetBrains Mono, monospace";
+          for (let t = 0; t <= totalDur + 0.001; t += step) {
+            const x = labelW + (t / totalDur) * drawW;
+            ctx.fillStyle = dk ? "#2a2d34" : "#c8c5bc";
+            ctx.fillRect(x, 0, 1, 24);
+            ctx.fillStyle = dk ? "#6b7280" : "#9a9589";
+            ctx.fillText(fmtShort(t), x + 2, 16);
+          }
+        }
+
+        /* ── Editing ── */
+        document.getElementById("btn-cut").addEventListener("click", () => {
+          const clip = getSelected();
+          if (!clip) {
+            toast("Select a clip first", "err");
+            return;
+          }
+          if (!hasSel(clip)) {
+            toast("Drag a region first", "err");
+            return;
+          }
+          const a = Math.min(clip.selStart, clip.selEnd),
+            b = Math.max(clip.selStart, clip.selEnd);
+          const before = a > 0.001 ? sliceBuffer(clip.buffer, 0, a) : null;
+          const after =
+            b < clip.buffer.duration - 0.001
+              ? sliceBuffer(clip.buffer, b, clip.buffer.duration)
+              : null;
+          let result = before || after;
+          if (before && after) result = concatBuffers(before, after);
+          if (!result) {
+            toast("Cannot cut the entire clip", "err");
+            return;
+          }
+          applyEdit(clip, result);
+          clip.selStart = clip.selEnd = null;
+          toast("Cut " + fmt(b - a), "ok");
         });
-        cvs.addEventListener(
-          "touchmove",
-          (e) => {
-            e.preventDefault();
-            onDrag(e.touches[0]);
-          },
-          { passive: false },
-        );
-        cvs.addEventListener("touchend", (e) => endDrag(e.changedTouches[0]));
 
-        function xToTime(x) {
-          if (!activeBuffer) return 0;
-          return Math.max(
-            0,
-            Math.min(
-              activeBuffer.duration,
-              (x / cvs.width) * activeBuffer.duration,
-            ),
+        document.getElementById("btn-keep").addEventListener("click", () => {
+          const clip = getSelected();
+          if (!clip) {
+            toast("Select a clip first", "err");
+            return;
+          }
+          if (!hasSel(clip)) {
+            toast("Drag a region first", "err");
+            return;
+          }
+          const a = Math.min(clip.selStart, clip.selEnd),
+            b = Math.max(clip.selStart, clip.selEnd);
+          applyEdit(clip, sliceBuffer(clip.buffer, a, b));
+          clip.selStart = clip.selEnd = null;
+          toast("Kept " + fmt(b - a), "ok");
+        });
+
+        document.getElementById("btn-undo").addEventListener("click", undoEdit);
+        document
+          .getElementById("btn-clear-sel")
+          .addEventListener("click", () => {
+            const clip = getSelected();
+            if (clip) {
+              clip.selStart = clip.selEnd = null;
+              drawClipWaveform(clip);
+            }
+            updateRegionInfoUI();
+          });
+        document.getElementById("btn-dl").addEventListener("click", () => {
+          const clip = getSelected();
+          if (!clip) {
+            toast("Select a clip first", "err");
+            return;
+          }
+          downloadBuffer(clip.buffer, "audioslice-clip.wav");
+          toast("Clip download started", "ok");
+        });
+        document
+          .getElementById("btn-join-dl")
+          .addEventListener("click", joinAndDownload);
+
+        function applyEdit(clip, newBuf) {
+          stopPlayback();
+          clip.history.push(clip.buffer);
+          if (clip.history.length > 30) clip.history.shift();
+          clip.buffer = newBuf;
+          // refresh label meta
+          if (clip.wrap) {
+            const meta = clip.wrap.querySelector(".clip-label-meta");
+            if (meta) meta.textContent = fmt(newBuf.duration);
+          }
+          drawClipWaveform(clip);
+          drawRuler(totalDuration());
+          setStatus(clips.length + " clip(s) · total " + fmt(totalDuration()));
+        }
+
+        function undoEdit() {
+          const clip = getSelected();
+          if (!clip) {
+            toast("Select a clip first", "err");
+            return;
+          }
+          if (clip.history.length < 2) {
+            toast("Nothing to undo", "err");
+            return;
+          }
+          clip.history.pop();
+          clip.buffer = clip.history[clip.history.length - 1];
+          clip.selStart = clip.selEnd = null;
+          if (clip.wrap) {
+            const meta = clip.wrap.querySelector(".clip-label-meta");
+            if (meta) meta.textContent = fmt(clip.buffer.duration);
+          }
+          drawClipWaveform(clip);
+          drawRuler(totalDuration());
+          updateRegionInfoUI();
+          toast("Undone", "ok");
+        }
+
+        function hasSel(clip) {
+          return (
+            clip.selStart !== null &&
+            clip.selEnd !== null &&
+            Math.abs(clip.selEnd - clip.selStart) > 0.005
           );
         }
 
-        function startDrag(e) {
-          if (!activeBuffer) return;
-          isDragging = true;
-          dragStartX = e.clientX - cvs.getBoundingClientRect().left;
-          selStart = xToTime(dragStartX);
-          selEnd = selStart;
-          drawWaveform();
-          updateRegionInfo();
-        }
-        function onDrag(e) {
-          if (!isDragging || !activeBuffer) return;
-          const x = e.clientX - cvs.getBoundingClientRect().left;
-          selEnd = xToTime(x);
-          drawWaveform();
-          updateRegionInfo();
-        }
-        function endDrag(e) {
-          if (!isDragging) return;
-          isDragging = false;
-          const x = e.clientX - cvs.getBoundingClientRect().left;
-          selEnd = xToTime(x);
-          if (Math.abs(selEnd - selStart) < 0.01) {
-            selStart = selEnd = null;
-          }
-          drawWaveform();
-          updateRegionInfo();
-        }
-
-        function updateRegionInfo() {
-          if (
-            selStart !== null &&
-            selEnd !== null &&
-            Math.abs(selEnd - selStart) > 0.01
-          ) {
-            const a = Math.min(selStart, selEnd),
-              b = Math.max(selStart, selEnd);
+        function updateRegionInfoUI() {
+          const clip = getSelected();
+          if (clip && hasSel(clip)) {
+            const a = Math.min(clip.selStart, clip.selEnd),
+              b = Math.max(clip.selStart, clip.selEnd);
             regionInfo.style.display = "";
             regionInfo.textContent =
-              fmt(a) + " → " + fmt(b) + "  (" + fmt(b - a) + ")";
+              fmt(a) + " → " + fmt(b) + " (" + fmt(b - a) + ")";
           } else {
             regionInfo.style.display = "none";
           }
         }
 
-        // ── Playback ──
+        /* ── Playback ── */
         document
           .getElementById("btn-play")
           .addEventListener("click", togglePlay);
         document
           .getElementById("btn-stop")
-          .addEventListener("click", stopAudio);
+          .addEventListener("click", () => stopPlayback());
         seekBar.addEventListener("input", () => {
-          if (!activeBuffer) return;
-          pauseOffset =
-            (parseFloat(seekBar.value) / 1000) * activeBuffer.duration;
+          if (!mergedBuffer) return;
+          playOffset =
+            (parseFloat(seekBar.value) / 1000) * mergedBuffer.duration;
           if (isPlaying) {
-            stopAudio(true);
-            playFrom(pauseOffset);
+            stopPlayback(true);
+            startPlay();
           }
-          drawWaveform();
+          renderAllWaveforms();
         });
-        document
-          .getElementById("vol-bar")
-          .addEventListener("input", function () {
-            if (sourceNode && sourceNode.gainNode)
-              sourceNode.gainNode.gain.value = this.value;
-          });
+        volBar.addEventListener("input", () => {
+          if (gainNode) gainNode.gain.value = parseFloat(volBar.value);
+        });
 
         function togglePlay() {
-          if (!activeBuffer) {
-            toast("Load a file first", "err");
+          if (!clips.length) {
+            toast("Add clips first", "err");
             return;
           }
-          isPlaying ? stopAudio(true) : playFrom(pauseOffset);
+          isPlaying ? stopPlayback(true) : startPlay();
         }
 
-        function playFrom(offset) {
+        function buildMerged() {
+          if (clips.length === 0) return null;
+          let result = clips[0].buffer;
+          for (let i = 1; i < clips.length; i++)
+            result = concatBuffers(result, clips[i].buffer);
+          return result;
+        }
+
+        function startPlay() {
+          if (AC.state === "suspended") AC.resume();
+          mergedBuffer = buildMerged();
+          if (!mergedBuffer) return;
           if (sourceNode) {
             try {
               sourceNode.stop();
             } catch (e) {}
           }
-          const gain = ctx.createGain();
-          gain.gain.value = parseFloat(
-            document.getElementById("vol-bar").value,
-          );
-          gain.connect(ctx.destination);
-          const src = ctx.createBufferSource();
-          src.buffer = activeBuffer;
-          src.connect(gain);
-          src.gainNode = gain;
-          src.start(0, offset);
+
+          gainNode = AC.createGain();
+          gainNode.gain.value = parseFloat(volBar.value);
+          gainNode.connect(AC.destination);
+
+          const src = AC.createBufferSource();
+          src.buffer = mergedBuffer;
+          src.connect(gainNode);
+          src.start(0, Math.min(playOffset, mergedBuffer.duration - 0.001));
           src.onended = () => {
             if (isPlaying) {
               isPlaying = false;
-              pauseOffset = 0;
+              playOffset = 0;
               document.getElementById("btn-play").textContent = "▶";
-              drawWaveform();
+              renderAllWaveforms();
             }
           };
           sourceNode = src;
-          startTime = ctx.currentTime - offset;
+          playStart = AC.currentTime - playOffset;
           isPlaying = true;
           document.getElementById("btn-play").textContent = "⏸";
           rafLoop();
         }
 
-        function stopAudio(pause) {
+        function stopPlayback(pause) {
           if (sourceNode) {
             try {
               sourceNode.stop();
             } catch (e) {}
             sourceNode = null;
           }
-          if (!pause) pauseOffset = 0;
-          else pauseOffset = getCurrentTime();
+          playOffset = pause ? currentPlayTime() : 0;
           isPlaying = false;
           document.getElementById("btn-play").textContent = "▶";
-          drawWaveform();
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+          renderAllWaveforms();
         }
 
-        function getCurrentTime() {
+        function currentPlayTime() {
           if (isPlaying)
             return Math.min(
-              ctx.currentTime - startTime,
-              activeBuffer ? activeBuffer.duration : 0,
+              AC.currentTime - playStart,
+              mergedBuffer ? mergedBuffer.duration : 0,
             );
-          return pauseOffset;
+          return playOffset;
         }
 
         function rafLoop() {
           if (!isPlaying) return;
-          const t = getCurrentTime(),
-            dur = activeBuffer ? activeBuffer.duration : 1;
+          const t = currentPlayTime();
+          const dur = mergedBuffer ? mergedBuffer.duration : 1;
           seekBar.value = (t / dur) * 1000;
           timeDisp.textContent = fmt(t) + " / " + fmt(dur);
-          drawWaveform();
-          requestAnimationFrame(rafLoop);
+          renderAllWaveforms();
+          rafId = requestAnimationFrame(rafLoop);
         }
 
-        // ── Editing ──
+        /* ── Clear buttons ── */
         document
-          .getElementById("btn-cut")
-          .addEventListener("click", cutSelection);
-        document
-          .getElementById("btn-keep")
-          .addEventListener("click", keepSelection);
-        document.getElementById("btn-undo").addEventListener("click", undoEdit);
-        document
-          .getElementById("btn-clear-sel")
+          .getElementById("btn-clear-timeline")
           .addEventListener("click", () => {
-            selStart = selEnd = null;
-            drawWaveform();
-            updateRegionInfo();
+            stopPlayback();
+            clips = [];
+            selectedClipId = null;
+            renderClips();
+            updateRegionInfoUI();
+            setStatus("no clips loaded");
+            toast("Timeline cleared", "ok");
           });
         document
-          .getElementById("btn-dl")
-          .addEventListener("click", downloadAudio);
-        document
-          .getElementById("btn-join")
-          .addEventListener("click", joinAndDownload);
+          .getElementById("btn-clear-all")
+          .addEventListener("click", () => {
+            stopPlayback();
+            clips = [];
+            selectedClipId = null;
+            uploadedFiles = [];
+            renderFileList();
+            renderClips();
+            updateRegionInfoUI();
+            clearBar.style.display = "none";
+            setStatus("no clips loaded");
+            toast("Everything cleared", "ok");
+          });
 
-        function hasSelection() {
-          return (
-            selStart !== null &&
-            selEnd !== null &&
-            Math.abs(selEnd - selStart) > 0.01
-          );
+        /* ── Join & Download ── */
+        function joinAndDownload() {
+          if (!clips.length) {
+            toast("No clips to join", "err");
+            return;
+          }
+          const merged = buildMerged();
+          if (!merged) return;
+          downloadBuffer(merged, "audioslice-joined.wav");
+          toast("Joined download started — " + fmt(merged.duration), "ok");
         }
 
+        /* ── Buffer ops ── */
         function sliceBuffer(buf, from, to) {
           const sr = buf.sampleRate,
             ch = buf.numberOfChannels;
-          const start = Math.floor(from * sr),
-            end = Math.floor(to * sr);
-          const len = end - start;
-          const out = ctx.createBuffer(ch, len, sr);
-          for (let c = 0; c < ch; c++) {
-            out
-              .getChannelData(c)
-              .set(buf.getChannelData(c).subarray(start, end));
-          }
+          const s = Math.floor(from * sr),
+            e = Math.floor(to * sr);
+          const out = AC.createBuffer(ch, e - s, sr);
+          for (let c = 0; c < ch; c++)
+            out.getChannelData(c).set(buf.getChannelData(c).subarray(s, e));
           return out;
         }
 
         function concatBuffers(a, b) {
+          /* Resample b to match a's sample rate if needed */
           const sr = a.sampleRate,
-            ch = a.numberOfChannels;
-          const out = ctx.createBuffer(ch, a.length + b.length, sr);
+            ch = Math.max(a.numberOfChannels, b.numberOfChannels);
+          const out = AC.createBuffer(ch, a.length + b.length, sr);
           for (let c = 0; c < ch; c++) {
             const d = out.getChannelData(c);
-            d.set(a.getChannelData(c), 0);
-            d.set(b.getChannelData(c), a.length);
+            d.set(
+              c < a.numberOfChannels
+                ? a.getChannelData(c)
+                : new Float32Array(a.length),
+              0,
+            );
+            d.set(
+              c < b.numberOfChannels
+                ? b.getChannelData(c)
+                : new Float32Array(b.length),
+              a.length,
+            );
           }
           return out;
         }
 
-        function cutSelection() {
-          if (!activeBuffer) {
-            toast("Load a file first", "err");
-            return;
-          }
-          if (!hasSelection()) {
-            toast("Select a region first", "err");
-            return;
-          }
-          const a = Math.min(selStart, selEnd),
-            b = Math.max(selStart, selEnd);
-          const before = a > 0.001 ? sliceBuffer(activeBuffer, 0, a) : null;
-          const after =
-            b < activeBuffer.duration - 0.001
-              ? sliceBuffer(activeBuffer, b, activeBuffer.duration)
-              : null;
-          let result = before || after;
-          if (before && after) result = concatBuffers(before, after);
-          if (!result) {
-            toast("Cannot cut entire audio", "err");
-            return;
-          }
-          applyEdit(result);
-          selStart = selEnd = null;
-          updateRegionInfo();
-          toast("Selection removed (" + fmt(b - a) + ")", "ok");
-        }
-
-        function keepSelection() {
-          if (!activeBuffer) {
-            toast("Load a file first", "err");
-            return;
-          }
-          if (!hasSelection()) {
-            toast("Select a region first", "err");
-            return;
-          }
-          const a = Math.min(selStart, selEnd),
-            b = Math.max(selStart, selEnd);
-          const result = sliceBuffer(activeBuffer, a, b);
-          applyEdit(result);
-          selStart = selEnd = null;
-          updateRegionInfo();
-          toast("Kept " + fmt(b - a) + " selection", "ok");
-        }
-
-        function applyEdit(newBuf) {
-          editHistory.push(activeBuffer);
-          if (editHistory.length > 30) editHistory.shift();
-          stopAudio();
-          activeBuffer = newBuf;
-          pauseOffset = 0;
-          drawWaveform();
-          drawTimeline();
-          setStatus("Edited — " + fmt(newBuf.duration));
-        }
-
-        function undoEdit() {
-          if (editHistory.length < 2) {
-            toast("Nothing to undo", "err");
-            return;
-          }
-          editHistory.pop();
-          stopAudio();
-          activeBuffer = editHistory[editHistory.length - 1];
-          pauseOffset = 0;
-          selStart = selEnd = null;
-          drawWaveform();
-          drawTimeline();
-          updateRegionInfo();
-          setStatus("Undone — " + fmt(activeBuffer.duration));
-          toast("Undone", "ok");
-        }
-
-        // ── Segments for join ──
-        function renderSegments() {
-          const panel = document.getElementById("segments-panel");
-          const list = document.getElementById("segment-list");
-          list.innerHTML = "";
-          if (segments.length === 0) {
-            panel.style.display = "none";
-            return;
-          }
-          panel.style.display = "";
-          segments.forEach((seg, i) => {
-            const div = document.createElement("div");
-            div.className = "segment-item";
-            div.innerHTML = `<div class="seg-index">${i + 1}</div>
-        <div class="seg-times">${fmt(seg.start)} → ${fmt(seg.end)}</div>
-        <div class="seg-dur">${fmt(seg.end - seg.start)}</div>
-        <button class="btn-icon btn-del" title="Remove segment">✕</button>`;
-            div.querySelector(".btn-del").addEventListener("click", () => {
-              segments.splice(i, 1);
-              renderSegments();
-            });
-            list.appendChild(div);
-          });
-        }
-
-        // ── WAV Export ──
-        function bufferToWav(buffer) {
-          const numCh = buffer.numberOfChannels;
-          const sr = buffer.sampleRate;
-          const len = buffer.length;
-          const ab = new ArrayBuffer(44 + len * numCh * 2);
-          const view = new DataView(ab);
-          function writeStr(o, s) {
+        /* ── WAV encoder ── */
+        function bufferToWav(buf) {
+          const ch = buf.numberOfChannels,
+            sr = buf.sampleRate,
+            len = buf.length;
+          const ab = new ArrayBuffer(44 + len * ch * 2);
+          const dv = new DataView(ab);
+          function ws(o, s) {
             for (let i = 0; i < s.length; i++)
-              view.setUint8(o + i, s.charCodeAt(i));
+              dv.setUint8(o + i, s.charCodeAt(i));
           }
-          writeStr(0, "RIFF");
-          view.setUint32(4, 36 + len * numCh * 2, true);
-          writeStr(8, "WAVE");
-          writeStr(12, "fmt ");
-          view.setUint32(16, 16, true);
-          view.setUint16(20, 1, true);
-          view.setUint16(22, numCh, true);
-          view.setUint32(24, sr, true);
-          view.setUint32(28, sr * numCh * 2, true);
-          view.setUint16(32, numCh * 2, true);
-          view.setUint16(34, 16, true);
-          writeStr(36, "data");
-          view.setUint32(40, len * numCh * 2, true);
-          let offset = 44;
-          for (let i = 0; i < len; i++) {
-            for (let c = 0; c < numCh; c++) {
-              const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
-              view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-              offset += 2;
+          ws(0, "RIFF");
+          dv.setUint32(4, 36 + len * ch * 2, true);
+          ws(8, "WAVE");
+          ws(12, "fmt ");
+          dv.setUint32(16, 16, true);
+          dv.setUint16(20, 1, true);
+          dv.setUint16(22, ch, true);
+          dv.setUint32(24, sr, true);
+          dv.setUint32(28, sr * ch * 2, true);
+          dv.setUint16(32, ch * 2, true);
+          dv.setUint16(34, 16, true);
+          ws(36, "data");
+          dv.setUint32(40, len * ch * 2, true);
+          let off = 44;
+          for (let i = 0; i < len; i++)
+            for (let c = 0; c < ch; c++) {
+              const s = Math.max(-1, Math.min(1, buf.getChannelData(c)[i]));
+              dv.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+              off += 2;
             }
-          }
           return ab;
         }
 
-        function downloadBuffer(buffer, name) {
-          const wav = bufferToWav(buffer);
-          const blob = new Blob([wav], { type: "audio/wav" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = name;
+        function downloadBuffer(buf, name) {
+          const url = URL.createObjectURL(
+            new Blob([bufferToWav(buf)], { type: "audio/wav" }),
+          );
+          const a = Object.assign(document.createElement("a"), {
+            href: url,
+            download: name,
+          });
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           setTimeout(() => URL.revokeObjectURL(url), 5000);
         }
 
-        function downloadAudio() {
-          if (!activeBuffer) {
-            toast("Nothing to download", "err");
-            return;
-          }
-          downloadBuffer(activeBuffer, "audioslice-export.wav");
-          toast("Download started!", "ok");
+        /* ── Helpers ── */
+        function totalDuration() {
+          return clips.reduce((s, c) => s + c.buffer.duration, 0);
         }
 
-        function joinAndDownload() {
-          if (!activeBuffer) {
-            toast("No audio loaded", "err");
-            return;
-          }
-          downloadBuffer(activeBuffer, "audioslice-joined.wav");
-          toast("Joined export started!", "ok");
-        }
-
-        // ── Helpers ──
         function fmt(s) {
           if (!isFinite(s)) return "0:00.000";
           const m = Math.floor(s / 60);
-          const sec = (s % 60).toFixed(3).padStart(6, "0");
-          return m + ":" + sec;
+          return m + ":" + (s % 60).toFixed(3).padStart(6, "0");
         }
         function fmtShort(s) {
           const m = Math.floor(s / 60),
@@ -1997,13 +2188,18 @@
             ? m + "m" + String(sec).padStart(2, "0") + "s"
             : sec + "s";
         }
+        function chooseStep(d) {
+          return d < 10 ? 1 : d < 60 ? 5 : d < 300 ? 15 : d < 600 ? 30 : 60;
+        }
         function esc(s) {
           return s
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
         }
-
+        function shortName(n) {
+          return n.length > 16 ? n.slice(0, 14) + "…" : n;
+        }
         function setStatus(msg) {
           statusTxt.textContent = msg;
         }
@@ -2017,15 +2213,21 @@
           toastTimer = setTimeout(() => (el.className = ""), 2800);
         }
 
-        // Keyboard shortcuts
+        /* ── Keyboard ── */
         document.addEventListener("keydown", (e) => {
           if (e.target.tagName === "INPUT") return;
           if (e.code === "Space") {
             e.preventDefault();
             togglePlay();
           }
-          if (e.code === "KeyZ" && (e.ctrlKey || e.metaKey)) undoEdit();
+          if (e.code === "KeyZ" && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            undoEdit();
+          }
         });
+
+        /* Init ruler */
+        setTimeout(() => drawRuler(0), 50);
       })();
     </script>
   </body>
